@@ -1,6 +1,6 @@
 {
   "name": "urn",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Creating, parsing, and validating ",
   "main": "dist/urn.umd.js",
   "jsnext:main": "dist/urn.es2015.js",
