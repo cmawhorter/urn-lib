@@ -1,9 +1,3 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(factory((global.urn = global.urn || {})));
-}(this, (function (exports) { 'use strict';
-
 var slicedToArray = function () {
   function sliceIterator(arr, i) {
     var _arr = [];
@@ -211,11 +205,5 @@ var RFC2141 = create(PREFIX, {
   allowEmpty: false
 });
 
-exports.generateDefaultValidationRules = generateDefaultValidationRules;
-exports.create = create;
-exports.RFC2141 = RFC2141;
-
-Object.defineProperty(exports, '__esModule', { value: true });
-
-})));
-//# sourceMappingURL=urn.umd.js.map
+export { generateDefaultValidationRules, create, RFC2141 };
+//# sourceMappingURL=urn-lib.es2015.js.map

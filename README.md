@@ -9,7 +9,7 @@ No dependencies.  Has tests.  PRs welcome.
 ## Getting started
 
 ```sh
-npm install cmawhorter/urn --save
+npm install urn-lib --save
 ```
 
 ## Usage
@@ -17,7 +17,7 @@ npm install cmawhorter/urn --save
 Using the default RFC2141 parser.
 
 ```js
-var URN = require('urn');
+var URN = require('urn-lib');
 var rfc2141 = URN.RFC2141;
 var str = 'urn:ietf:rfc:2648';
 var parsed = rfc2141.parse(str);
@@ -49,7 +49,7 @@ Output:
 ## Example
 
 ```js
-var URN = require('urn');
+var URN = require('urn-lib');
 var arn = URN.create('arn', {
   components: [ // protocol is automatically added (protocol = urn or arn or whatever)
     'partition',

@@ -27,7 +27,7 @@ export default {
   ],
   external:           [].concat(builtins),
   targets: [
-    { dest: 'dist/urn.umd.js', format: 'umd', moduleName: 'urn' },
-    { dest: 'dist/urn.es2015.js', format: 'es' },
+    { dest: 'dist/urn-lib.umd.js', format: 'umd', moduleName: 'urn-lib' },
+    { dest: 'dist/urn-lib.es2015.js', format: 'es' },
   ],
 }
