@@ -135,9 +135,10 @@ function urnObject(protocol, customRules, allowZeroLength, parsed) {
   return errors.length ? errors : null;
 }
 
-var format = function (components, separator, parsed) {
-  if (!parsed.hasOwnProperty('protocol') || !isString(parsed.protocol)) throw new Error('protocol is missing or invalid');
-  return parsed.protocol + separator + components.map(function (name) {
+var format = function (protocol, components, separator, parsed) {
+  protocol = parsed && parsed.hasOwnProperty('protocol') ? parsed.protocol : protocol;
+  if (!isString(protocol)) throw new Error('protocol is missing or invalid');
+  return protocol + separator + components.map(function (name) {
     return !isString(parsed[name]) ? '' : parsed[name];
   }).join(separator);
 };
@@ -198,7 +199,7 @@ function create(protocol, options) {
   var validationRules = options.validationRules || generateDefaultValidationRules(components);
   return {
     validate: urnObject.bind(null, protocol, validationRules, allowEmpty),
-    format: format.bind(null, components, separator),
+    format: format.bind(null, protocol, components, separator),
     parse: tokenize.bind(null, components, separator),
     build: build.bind(null, protocol, components)
   };
