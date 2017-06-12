@@ -1,0 +1,9 @@
+/node_modules/
+/src/
+/examples/
+.editorconfig
+.gitignore
+.travis.yml
+rollup.config.js
+yarn.lock
+*.log

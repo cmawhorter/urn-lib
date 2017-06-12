@@ -2,11 +2,7 @@
 # yarn lockfile v1
 
 
-acorn-es7-plugin@~1.1.0:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/acorn-es7-plugin/-/acorn-es7-plugin-1.1.7.tgz#f2ee1f3228a90eead1245f9ab1922eb2e71d336b"
-
-acorn@^4.0.1, acorn@~4.0.5:
+acorn@^4.0.1:
   version "4.0.13"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-4.0.13.tgz#105495ae5361d697bd195c825192e1ad7f253787"
 
@@ -31,10 +27,6 @@ arr-flatten@^1.0.1:
 array-unique@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.2.1.tgz#a1d97ccafcbc2625cc70fadceb36a50c58b01a53"
-
-ast-types@^0.9.5:
-  version "0.9.12"
-  resolved "https://registry.yarnpkg.com/ast-types/-/ast-types-0.9.12.tgz#b136300d67026625ae15326982ca9918e5db73c9"
 
 babel-code-frame@^6.22.0:
   version "6.22.0"
@@ -908,7 +900,7 @@ loose-envify@^1.0.0:
   dependencies:
     js-tokens "^3.0.0"
 
-magic-string@^0.19.0, magic-string@~0.19.0:
+magic-string@^0.19.0:
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.19.1.tgz#14d768013caf2ec8fdea16a49af82fc377e75201"
   dependencies:
@@ -1093,15 +1085,6 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
-reify@^0.4.4:
-  version "0.4.16"
-  resolved "https://registry.yarnpkg.com/reify/-/reify-0.4.16.tgz#d852914a692beced4d32bc0549d9d13a8d466a77"
-  dependencies:
-    acorn "~4.0.5"
-    acorn-es7-plugin "~1.1.0"
-    ast-types "^0.9.5"
-    magic-string "~0.19.0"
-
 remove-trailing-separator@^1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/remove-trailing-separator/-/remove-trailing-separator-1.0.2.tgz#69b062d978727ad14dc6b56ba4ab772fd8d70511"
@@ -1181,7 +1164,7 @@ slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
 
-source-map-support@^0.4.0, source-map-support@^0.4.2:
+source-map-support@^0.4.0, source-map-support@^0.4.15, source-map-support@^0.4.2:
   version "0.4.15"
   resolved "https://registry.yarnpkg.com/source-map-support/-/source-map-support-0.4.15.tgz#03202df65c06d2bd8c7ec2362a193056fef8d3b1"
   dependencies:

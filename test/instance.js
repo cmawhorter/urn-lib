@@ -12,7 +12,7 @@ var componentsWithProtocol = ['protocol'].concat(components);
 
 var URN = require('../src/main.js');
 var arn = URN.create('arn', {
-  components,
+  components: components,
   allowEmpty: true, // support s3-style
 });
 
@@ -213,7 +213,7 @@ describe('Instance', function() {
       'arn:aws:s3:::my_corporate_bucket/*',
       'arn:aws:s3:::my_corporate_bucket/Development/*',
     ];
-    canned.forEach(urn => {
+    canned.forEach(function(urn) {
       var parsed = arn.parse(urn);
       var formatted = arn.format(parsed);
       expect(formatted).toEqual(urn);

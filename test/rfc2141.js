@@ -16,7 +16,7 @@ describe('RFC2141', function() {
       'urn:nbn:de:bvb:19-146642',
       'urn:lex:eu:council:directive:2010-03-09;2010-19-UE',
     ];
-    canned.forEach(urn => {
+    canned.forEach(function(urn) {
       var parsed = rfc2141.parse(urn);
       var formatted = rfc2141.format(parsed);
       expect(formatted).toEqual(urn);

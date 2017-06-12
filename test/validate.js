@@ -1,6 +1,5 @@
 'use strict';
 
-require('reify');
 var validate = require('../src/lib/validate.js');
 
 describe('validate', function() {
@@ -121,27 +120,27 @@ describe('validate', function() {
     var customRules     = [];
     var allowZeroLength = true;
     it('should validate parsed', function() {
-      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol, nid, nss })).toEqual(null);
+      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol: protocol, nid: nid, nss: nss })).toEqual(null);
     });
     it('should detect invalid protocol', function() {
-      var errors = validate.urnObject(protocol, customRules, allowZeroLength, { protocol: 'x', nid, nss });
+      var errors = validate.urnObject(protocol, customRules, allowZeroLength, { protocol: 'x', nid: nid, nss: nss });
       expect(errors).toBeAn(Array);
       expect(errors.length).toEqual(1);
     });
     it('should optionally allow empty strings', function() {
-      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol, nid: '', nss })).toEqual(null);
-      expect(validate.urnObject(protocol, customRules, false, { protocol, nid: '', nss })).toBeAn(Array);
-      expect(validate.urnObject(protocol, customRules, false, { protocol, nid: null, nss })).toBeAn(Array);
+      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol: protocol, nid: '', nss: nss })).toEqual(null);
+      expect(validate.urnObject(protocol, customRules, false, { protocol: protocol, nid: '', nss: nss })).toBeAn(Array);
+      expect(validate.urnObject(protocol, customRules, false, { protocol: protocol, nid: null, nss: nss })).toBeAn(Array);
     });
     it('should fail for missing and invalid components', function() {
-      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol, nid: null, nss })).toBeAn(Array);
-      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol, nid: void 0, nss })).toBeAn(Array);
+      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol: protocol, nid: null, nss: nss })).toBeAn(Array);
+      expect(validate.urnObject(protocol, customRules, allowZeroLength, { protocol: protocol, nid: void 0, nss: nss })).toBeAn(Array);
     });
     it('should suport custom rules', function() {
-      var successRules = [ [ 'nid', 'error', (value) => true ] ];
-      var failRules = [ [ 'nid', 'error', (value) => false ] ];
-      expect(validate.urnObject(protocol, successRules, allowZeroLength, { protocol, nid, nss })).toEqual(null);
-      expect(validate.urnObject(protocol, failRules, allowZeroLength, { protocol, nid, nss })).toBeAn(Array);
+      var successRules = [ [ 'nid', 'error', function(value) { return true; } ] ];
+      var failRules = [ [ 'nid', 'error', function(value) { return false; } ] ];
+      expect(validate.urnObject(protocol, successRules, allowZeroLength, { protocol: protocol, nid: nid, nss: nss })).toEqual(null);
+      expect(validate.urnObject(protocol, failRules, allowZeroLength, { protocol: protocol, nid: nid, nss: nss })).toBeAn(Array);
     });
   });
 });
