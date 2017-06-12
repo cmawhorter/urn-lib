@@ -1,4 +1,4 @@
-# urn
+# urn [![Build Status](https://travis-ci.org/cmawhorter/urn-lib.svg?branch=master)](http://travis-ci.org/cmawhorter/urn-lib)
 
 Parse, validate, and format RFC2141 urn strings or custom implementations like AWS' arn.
 
