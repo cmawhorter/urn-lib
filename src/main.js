@@ -31,7 +31,7 @@ export function create(protocol, options) {
   let validationRules   = options.validationRules || generateDefaultValidationRules(components);
   return {
     validate:   urnObject.bind(null, protocol, validationRules, allowEmpty),
-    format:     format.bind(null, components, separator),
+    format:     format.bind(null, protocol, components, separator),
     parse:      tokenize.bind(null, components, separator),
     build:      build.bind(null, protocol, components),
   };
