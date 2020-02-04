@@ -7,7 +7,6 @@ import { PREFIX as RFC2141_PREFIX, SEPARATOR as RFC2141_SEPARATOR, COMPONENTS as
 // as an nid string (with limited valid charset)
 export function generateDefaultValidationRules(components) {
   let lastIndex = components.length - 1;
-  let nss = components[lastIndex];
   let rules = [];
   for (let i=0; i < lastIndex; i++) {
     let name = components[i];
@@ -26,7 +25,7 @@ function build(protocol, components, data) {
 export function create(protocol, options) {
   options = options || {};
   let components        = options.components || RFC2141_COMPONENTS;
-  let allowEmpty        = options.hasOwnProperty('allowEmpty') ? options.allowEmpty : false;
+  let allowEmpty        = 'allowEmpty' in options ? options.allowEmpty : false;
   let separator         = options.separator || RFC2141_SEPARATOR;
   let validationRules   = options.validationRules || generateDefaultValidationRules(components);
   return {

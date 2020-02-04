@@ -39,7 +39,7 @@ export function isProtocol(protocol, parsed) {
 
 export function isValid(parsed, propertyName, allowZeroLength) {
   let value = parsed[propertyName];
-  return parsed.hasOwnProperty(propertyName) && isString(value) && (allowZeroLength || value.length > 0);
+  return propertyName in parsed && isString(value) && (allowZeroLength || value.length > 0);
 }
 
 export function urnObject(protocol, customRules, allowZeroLength, parsed) {
