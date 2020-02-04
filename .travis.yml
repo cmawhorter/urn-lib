@@ -1,8 +1,48 @@
-language: node_js
-node_js:
-- "8"
-- "7"
-- "6"
-- "5"
-- "4"
-- "0.12"
+jobs:
+  include:
+    - language: node_js
+      node_js: 0.12
+
+    - name: "Node.js: 4"
+      language: minimal
+      install:
+        - nvm install 4
+        # Yarn v1.12.3 is last *known* version to work on node v4/v5
+        # See: https://github.com/yarnpkg/yarn/issues/6914
+        - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
+        - export PATH="$HOME/.yarn/bin:$PATH"
+        - yarn version
+      script:
+        - yarn
+        - yarn run test
+
+    - name: "Node.js: 5"
+      language: minimal
+      install:
+        - nvm install 5
+        # Yarn v1.12.3 is last *known* version to work on node v4/v5
+        # See: https://github.com/yarnpkg/yarn/issues/6914
+        - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.3
+        - export PATH="$HOME/.yarn/bin:$PATH"
+        - yarn version
+      script:
+        - yarn
+        - yarn run test
+
+    - language: node_js
+      node_js: 6
+
+    - language: node_js
+      node_js: 7
+
+    - language: node_js
+      node_js: 8
+
+    - language: node_js
+      node_js: 10
+
+    - language: node_js
+      node_js: 12
+
+    - language: node_js
+      node_js: 13
