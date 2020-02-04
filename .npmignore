@@ -1,8 +1,13 @@
+/.nyc_output/
+/.reify-cache/
+/coverage/
+/examples/
 /node_modules/
 /src/
-/examples/
 .editorconfig
+.eslintrc.js
 .gitignore
+.nvmrc
 .travis.yml
 rollup.config.js
 yarn.lock
