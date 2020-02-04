@@ -22,7 +22,7 @@
     "url": "https://github.com/cmawhorter/urn/issues"
   },
   "engines": {
-    "node": ">=0.12.0 - <9.0.0"
+    "node": ">=0.12.0 - <14.0.0"
   },
   "license": "MIT",
   "devDependencies": {
