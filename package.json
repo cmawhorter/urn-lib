@@ -11,11 +11,11 @@
     "url": "http://www.mawhorter.net/"
   },
   "scripts": {
-    "prebuild": "yarn run lint && yarn run test",
+    "prebuild": "npm run lint && npm run test",
     "build": "rollup -c",
     "postbuild": "node ./scripts/assert-build.js",
     "lint": "eslint ./src",
-    "coverage": "nyc --reporter=html yarn run test",
+    "coverage": "nyc --reporter=html npm run test",
     "test": "mocha -r ./test/lib/helper test"
   },
   "repository": {

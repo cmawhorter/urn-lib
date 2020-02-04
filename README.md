@@ -6,6 +6,8 @@ Yes, it's true that RFC2141 is deprecated (replaced by URI), but urn is still a 
 
 No dependencies.  Has tests.  PRs welcome.
 
+Should work in node v0.12-13+.
+
 ## Getting started
 
 ```sh
@@ -137,3 +139,13 @@ console.log('valid', arn.validate(valid)); // => valid null
 var china = arn.parse('arn:aws-cn:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
 console.log('invalid', arn.validate(china)); // => invalid [ 'validation failed for partition: the China partition is unsupported' ]
 ```
+
+## Release notes
+
+### `1.2.0`
+
+Because of build changes and dropping support (in CI) for older node versions I did a minor bump. Nothing has really changed under the hood though.
+
+- bumped dev dependencies
+- drop CI support for very old node. node versions: 0.12, 4, 5, 6, 7. (Note: urn-lib 1.1.x worked with those versions and nothing has changed to break that support. they're just no longer part of CI. if you find a problem with >= 0.12 open an issue)
+- improve build process
