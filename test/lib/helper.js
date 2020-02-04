@@ -1,8 +1,7 @@
-require('source-map-support').install();
+'use strict';
 
 global.assert = require('assert');
-global.expect = require('expect');
+global.chai = require('chai');
+global.expect = global.chai.expect;
 
-require('babel-register')({
-  only: /\bsrc\b/,
-});
+require('reify');

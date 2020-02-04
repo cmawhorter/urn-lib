@@ -19,7 +19,7 @@ describe('RFC2141', function() {
     canned.forEach(function(urn) {
       var parsed = rfc2141.parse(urn);
       var formatted = rfc2141.format(parsed);
-      expect(formatted).toEqual(urn);
+      expect(formatted).to.equal(urn);
     });
   });
 });

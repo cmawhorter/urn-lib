@@ -1,6 +1,6 @@
 {
   "name": "urn-lib",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Creating, parsing, and validating ",
   "main": "dist/urn-lib.umd.js",
   "jsnext:main": "dist/urn-lib.es2015.js",
@@ -12,6 +12,8 @@
   },
   "scripts": {
     "build": "rollup -c",
+    "lint": "eslint ./src",
+    "coverage": "nyc --reporter=html yarn run test",
     "test": "mocha -r ./test/lib/helper test"
   },
   "repository": {
@@ -27,8 +29,11 @@
     "babel-preset-es2015": "^6.22.0",
     "babel-register": "^6.22.0",
     "builtin-modules": "^1.1.1",
-    "expect": "^1.20.2",
+    "chai": "^4.2.0",
+    "eslint": "^6.8.0",
     "mocha": "^3.2.0",
+    "nyc": "^15.0.0",
+    "reify": "^0.20.12",
     "rollup": "^0.41.4",
     "rollup-plugin-babel": "^2.7.1",
     "rollup-plugin-commonjs": "^7.0.0",
