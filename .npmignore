@@ -5,6 +5,7 @@
 /node_modules/
 /scripts/
 /src/
+/test/
 .editorconfig
 .eslintrc.js
 .gitignore
