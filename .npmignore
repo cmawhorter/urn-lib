@@ -3,6 +3,7 @@
 /coverage/
 /examples/
 /node_modules/
+/scripts/
 /src/
 .editorconfig
 .eslintrc.js

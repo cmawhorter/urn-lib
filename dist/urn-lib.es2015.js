@@ -98,7 +98,7 @@ function isProtocol(protocol, parsed) {
 
 function isValid(parsed, propertyName, allowZeroLength) {
   var value = parsed[propertyName];
-  return parsed.hasOwnProperty(propertyName) && isString(value) && (allowZeroLength || value.length > 0);
+  return propertyName in parsed && isString(value) && (allowZeroLength || value.length > 0);
 }
 
 function urnObject(protocol, customRules, allowZeroLength, parsed) {
@@ -130,7 +130,7 @@ function urnObject(protocol, customRules, allowZeroLength, parsed) {
 }
 
 var format = function (protocol, components, separator, parsed) {
-  protocol = parsed && parsed.hasOwnProperty('protocol') ? parsed.protocol : protocol;
+  protocol = parsed && 'protocol' in parsed ? parsed.protocol : protocol;
   if (!isString(protocol)) throw new Error('protocol is missing or invalid');
   return protocol + separator + components.map(function (name) {
     return !isString(parsed[name]) ? '' : parsed[name];
@@ -165,7 +165,6 @@ var COMPONENTS = ['nid', 'nss'];
 // as an nid string (with limited valid charset)
 function generateDefaultValidationRules(components) {
   var lastIndex = components.length - 1;
-  var nss = components[lastIndex];
   var rules = [];
   for (var i = 0; i < lastIndex; i++) {
     var name = components[i];
@@ -188,7 +187,7 @@ function build(protocol, components, data) {
 function create(protocol, options) {
   options = options || {};
   var components = options.components || COMPONENTS;
-  var allowEmpty = options.hasOwnProperty('allowEmpty') ? options.allowEmpty : false;
+  var allowEmpty = 'allowEmpty' in options ? options.allowEmpty : false;
   var separator = options.separator || SEPARATOR;
   var validationRules = options.validationRules || generateDefaultValidationRules(components);
   return {

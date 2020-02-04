@@ -11,7 +11,9 @@
     "url": "http://www.mawhorter.net/"
   },
   "scripts": {
+    "prebuild": "yarn run lint && yarn run test",
     "build": "rollup -c",
+    "postbuild": "node ./scripts/assert-build.js",
     "lint": "eslint ./src",
     "coverage": "nyc --reporter=html yarn run test",
     "test": "mocha -r ./test/lib/helper test"
