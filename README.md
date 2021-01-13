@@ -158,6 +158,8 @@ if (Array.isArray(valid)) {
 
 Takes an already-parsed urn and returns the stringified version.  Note that whether or not you've enabled options.allowEmpty, empty values will be included in the result (PR welcome).
 
+Note: If parsed.protocol exists it is **ignored** and the protocol supplied with create() options is used instead. 
+
 Example:
 ```js
 const componentNames = [ 'something', 'else', 'not_included' ];
@@ -178,6 +180,8 @@ Takes an urn string and parses it into component parts or returns null if `value
 
 Allows you to construct arbitrary parsed urns to use with `validate()` or `format()`.
 
+Note: If you provide a protocol to build it is used, but that won't work with format(). See #8.
+
 Note: Build returns null values and there is currently a bug/feature #7 with validate() that will cause validation to fail if ParsedUrn has any null values. (PR welcome)
 
 Example:
@@ -188,16 +192,6 @@ const myUrn = URN.create(...);
 const parsed = myUrn.build({
   something: 'hello',
 });
-```
-
-You can also use build to change protocols:
-
-```js
-const arn = URN.create(...);
-const parsedArn = arn.parse('arn:aws:...');
-console.log(arn.build(Object.assign(parsedArn, {
-  protocol: 'somethingelse'
-))); // somethingelse:aws:...
 ```
 
 ### Type: `ParsedUrn = { [key: string]: null | string }`
