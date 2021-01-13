@@ -190,6 +190,16 @@ const parsed = myUrn.build({
 });
 ```
 
+You can also use build to change protocols:
+
+```js
+const arn = URN.create(...);
+const parsedArn = arn.parse('arn:aws:...');
+console.log(arn.build(Object.assign(parsedArn, {
+  protocol: 'somethingelse'
+))); // somethingelse:aws:...
+```
+
 ### Type: `ParsedUrn = { [key: string]: null | string }`
 
 The key will be the component name and the corresponding urn value.
@@ -210,6 +220,41 @@ const parsed: ParsedUrn = {
   region: 'us-east-1',
   // etc.
 };
+```
+
+## Types
+
+Example of types that I use:
+```ts
+// You'd update this to match your component parts 
+export interface IParsedUrn {
+  protocol: null | string;
+  partition: null | string;
+  service: null | string;
+  region: null | string;
+  account: null | string;
+  resource: null | string;
+}
+
+export interface IPopulatedParsedUrn extends IParsedUrn {
+  protocol: string;
+  partition: string;
+  service: string;
+  region: string;
+  account: string;
+  resource: string;
+}
+
+export interface UrnFunctions {
+  parse(value: unknown): null | IParsedSun;
+  format(parsed: IParsedSun): null | IParsedSun;
+  /**
+   * Requires populated urn or else validation will fail for null values
+   * @param parsed
+   */
+  validate(parsed: IPopulatedParsedSun): null | string[];
+  build(parsed: Partial<IParsedSun>): IParsedSun;
+}
 ```
 
 ## Custom validation rules example
