@@ -2,6 +2,18 @@ import { Item, ValidationRule, ValidationRuleObject } from '../typings';
 
 export const RFC2141_NID_VALID = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-';
 
+// generates an array of rules that treats all but the last component
+// as an nid string (with limited valid charset)
+export function generateDefaultValidationRules(components: string[]): ValidationRule[] {
+  const lastIndex = components.length - 1;
+  const rules: ValidationRule[] = [];
+  for (let i=0; i < lastIndex; i++) {
+    const name = components[i];
+    rules.push([ name, 'invalid characters', (value: unknown) => isRfc2141NidString(value, false) ]);
+  }
+  return rules;
+}
+
 export function validationRuleObjectToArray(rule: ValidationRuleObject | ValidationRule): ValidationRule {
   if (Array.isArray(rule)) {
     return rule;

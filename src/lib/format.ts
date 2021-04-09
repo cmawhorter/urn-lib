@@ -11,3 +11,18 @@ export function formatUrn(
   if (!isString(protocol)) throw new Error('protocol is missing or invalid');
   return protocol + separator + components.map(name => !isString(parsed[name]) ? '' : parsed[name]).join(separator);
 }
+
+export function buildUrn(
+  protocol: string,
+  components: string[],
+  data: Item<string, unknown> = {}
+): Item<string, null | string> {
+  data = data || {};
+  const result: Item<string, null | string> = { protocol };
+  components
+    .forEach(name => {
+      const value = data[name];
+      result[name] = isString(value) ? value : null;
+    });
+  return result;
+}
