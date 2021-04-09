@@ -32,9 +32,7 @@ node_modules
 # Optional REPL history
 .node_repl_history
 
+dist
+
 .DS_Store
 Thumbs.db
-
-.reify-cache
-.nyc_output
-coverage

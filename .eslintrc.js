@@ -1,32 +1,24 @@
 module.exports = {
-  "env": {
-    "es6": true,
-    "node": true
+  env: {
+    node: true,
+    es6: true,
   },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "ecmaVersion": 8,
-    "sourceType": "module"
+  parser: '@typescript-eslint/parser',
+  extends: [
+    'plugin:@typescript-eslint/recommended',
+  ],
+  parserOptions: {
+    ecmaVersion: 2018,
+    sourceType: 'module',
   },
-  "rules": {
-    "indent": [
-      "error",
-      2
+  rules: {
+    '@typescript-eslint/no-inferrable-types': 0,
+    '@typescript-eslint/no-unused-vars': [
+      'warn', {
+        vars: 'all',
+        args: 'none',
+      }
     ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "no-console": 0,
-    "no-unused-vars": ["error", { "args": "none" }],
-    "indent": ["error", 2, { "SwitchCase": 1 }],
-  }
+    'no-undef': 2,
+  },
 };
