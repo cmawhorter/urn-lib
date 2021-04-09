@@ -6,12 +6,10 @@ Yes, it's true that RFC2141 is deprecated (replaced by URI), but urn is still a 
 
 No dependencies.  Has tests.  PRs welcome.
 
-Should work in node v0.12-13+.
-
 ## Getting started
 
 ```sh
-npm install urn-lib --save
+npm i urn-lib
 ```
 
 ## Usage
@@ -19,12 +17,11 @@ npm install urn-lib --save
 Using the default RFC2141 parser.
 
 ```js
-const URN = require('urn-lib');
-const rfc2141 = URN.RFC2141;
+import { RFC2141 } from 'urn-lib';
 const str = 'urn:ietf:rfc:2648';
-const parsed = rfc2141.parse(str); 
-const validationErrors = rfc2141.validate(parsed);
-const formatted = rfc2141.format(parsed);
+const parsed = RFC2141.parse(str); 
+const validationErrors = RFC2141.validate(parsed);
+const formatted = RFC2141.format(parsed);
 const match = str === formatted;
 console.log(JSON.stringify({ parsed, formatted, validationErrors, match }, null, 2));
 ```
