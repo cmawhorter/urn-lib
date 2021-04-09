@@ -28,6 +28,6 @@ jobs:
           fi
       - run: echo 'Publishing version - ${{env.PKG_VERSION}}'
       - run: npm ci
-      - run: npm publish --dry-run
+      - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
