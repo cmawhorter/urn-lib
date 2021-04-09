@@ -2,29 +2,26 @@
 
 Parse, validate, and format RFC2141 urn strings or custom implementations like AWS' arn.
 
-Yes, it's true that RFC2141 is deprecated (replaced by URI), but urn is still a concise, useful way for creating unique, human readable strings to identify things.  AWS arn is urn, for example.
+Yes, it's true that RFC2141 is deprecated (replaced by URI), but urn is still a concise, useful way for creating unique and human readable strings to identify things.  AWS arn is urn, for example.
 
 No dependencies.  Has tests.  PRs welcome.
-
-Should work in node v0.12-13+.
 
 ## Getting started
 
 ```sh
-npm install urn-lib --save
+npm i urn-lib
 ```
 
 ## Usage
 
 Using the default RFC2141 parser.
 
-```js
-const URN = require('urn-lib');
-const rfc2141 = URN.RFC2141;
+```ts
+import { RFC2141 } from 'urn-lib';
 const str = 'urn:ietf:rfc:2648';
-const parsed = rfc2141.parse(str); 
-const validationErrors = rfc2141.validate(parsed);
-const formatted = rfc2141.format(parsed);
+const parsed = RFC2141.parse(str); 
+const validationErrors = RFC2141.validate(parsed);
+const formatted = RFC2141.format(parsed);
 const match = str === formatted;
 console.log(JSON.stringify({ parsed, formatted, validationErrors, match }, null, 2));
 ```
@@ -44,15 +41,15 @@ Output:
 }
 ```
 
-## Advanced usage
+## Custom parser and formatter
 
-`URN.create(protocol, [options])`
+`createUrnUtil(protocol, [options])` 
 
-## Example
+## Example for AWS arn's
 
-```js
-const URN = require('urn-lib');
-const arn = URN.create('arn', {
+```ts
+import { createUrnUtil } from 'urn-lib';
+const arn = createUrnUtil('arn', {
   components: [ // protocol is automatically added (protocol = urn or arn or whatever)
     'partition',
     'service',
@@ -91,16 +88,15 @@ Output:
 
 ## API
 
-Import `const URN = require('urn-lib');`.  Note that this lib has no types but the descriptions below include typescript definitions that don't actually exist to simplify language.
-
-### `URN.generateDefaultValidationRules(components: string[]): ValidationRule[]`
+### `generateDefaultValidationRules(components: string[]): ValidationRule[]`
 
 Creates an array of validation rules that target each named component in the array.  Returns one default ValidationRule for each component in array. 
 
 Example: 
-```js
+```ts
+import { generateDefaultValidationRules } from 'urn-lib';
 // If creating an AWS arn parser:
-URN.generateDefaultValidationRules([ 
+generateDefaultValidationRules([ 
     // no need to add "arn". that is considered the "protocol" and added/handled for you outside of default rules
     'partition', // these are the named component parts we want to target with the default rules
     'service',
@@ -111,15 +107,16 @@ URN.generateDefaultValidationRules([
 ]);
 ```
 
-### `URN.RFC2141` is `UrnFunctions` that meets RFC2141
+### `RFC2141` is `UrnUtil` that meets RFC2141
 
-This just calls create() with the values required to create an rfc 2141 compliant collection of UrnFunctions (see below).  You probably don't want this and instead want to create your own calling `URN.create(...)`.
+This just calls create() with the values required to create an rfc 2141 compliant collection of UrnUtil (see below).  You probably don't want this and instead want to create your own calling `createUrnUtil(...)`.
 
-### `create(protocol: string, options: CreateUrnOptions}): UrnFunctions` 
+### `createUrnUtil(protocol: string, options: UrnLibOptions}): UrnUtil` 
+### `create(protocol: string, options: UrnLibOptions}): UrnUtil` 
 
 Creates a parser, validator, and formatter using the provided options.
 
-#### `options: CreateUrnOptions`
+#### `options: UrnLibOptions`
 
 - `options.components`: The names of the component parts of your scheme in order.  This becomes the parsed key names.  Defaults to `[ 'nid', 'nss' ]`
 - `options.allowEmpty`: Whether or not empty strings should be considered valid.  e.g. arn::::s3 would be invalid if this is false. Defaults to `false`
@@ -127,16 +124,17 @@ Creates a parser, validator, and formatter using the provided options.
 - `options.validationRules`: An array of custom validation rules to run.  If none are provided, defaults to using `generateDefaultValidationRules()` (which just makes sure all values are valid RFC2141 NID strings)
 
 ### Type: `ValidationRule = [string, string, (value: unknown) => boolean]`
+### Type: `ValidationRuleObject = { name: string; failureMessage: string; test: (value: unknown) => boolean; }`
 
-A validation rule is a tuple.
+Define rules using a tuple (ValidationRule) or something easier to maintain (ValidationRuleObject).
 
 - string: component name rule targets
 - string: validation error message if rule doesn't pass 
 - function: returns true if value passes validation
 
-### Type: `UrnFunctions`
+### Type: `UrnUtil`
 
-Calling `create()` returns an object with a collection of bound functions that can be called.
+Calling `createUrnUtil()` returns an object with a collection of bound functions that can be called.
 
 #### `validate(parsed: ParsedUrn): null | string[]`
 
@@ -145,8 +143,9 @@ Takes an already-parsed urn and runs all validation rules.  Will return null if 
 Note: There is currently a bug/feature #7 that will cause validation to fail if ParsedUrn has any null values. (PR welcome)
 
 Example:
-```js
-const myUrn = URN.create(...);
+```ts
+import { createUrnUtil } from 'urn-lib';
+const myUrn = createUrnUtil(...);
 const parsedUrn: ParsedUrn = { ... };
 const valid = myUrn.validate(parsedUrn);
 if (Array.isArray(valid)) {
@@ -161,9 +160,10 @@ Takes an already-parsed urn and returns the stringified version.  Note that whet
 Note: If parsed.protocol exists it is **ignored** and the protocol supplied with create() options is used instead. 
 
 Example:
-```js
+```ts
+import { createUrnUtil } from 'urn-lib';
 const componentNames = [ 'something', 'else', 'not_included' ];
-const myUrn = URN.create(...);
+const myUrn = createUrnUtil(...);
 const parsedUrn: ParsedUrn = {
   something: 'value',
   else: null,
@@ -185,9 +185,10 @@ Note: If you provide a protocol to build it is used, but that won't work with fo
 Note: Build returns null values and there is currently a bug/feature #7 with validate() that will cause validation to fail if ParsedUrn has any null values. (PR welcome)
 
 Example:
-```js
+```ts
+import { createUrnUtil } from 'urn-lib';
 // componentNames = [ 'something', 'else', 'not_included' ];
-const myUrn = URN.create(...);
+const myUrn = createUrnUtil(...);
 // parsed will contain full object with all component names set to null, unless provided
 const parsed = myUrn.build({
   something: 'hello',
@@ -198,8 +199,8 @@ const parsed = myUrn.build({
 
 The key will be the component name and the corresponding urn value.
 
-Example: Using an AWS arn
-```
+Example: Using an AWS arn (This is also available in examples/aws-arn-parser.js)
+```ts
 const componentNames = [
   'partition',
   'service',
@@ -216,48 +217,14 @@ const parsed: ParsedUrn = {
 };
 ```
 
-## Types
-
-Example of types that I use:
-```ts
-// You'd update this to match your component parts 
-export interface IParsedUrn {
-  protocol: null | string;
-  partition: null | string;
-  service: null | string;
-  region: null | string;
-  account: null | string;
-  resource: null | string;
-}
-
-export interface IPopulatedParsedUrn extends IParsedUrn {
-  protocol: string;
-  partition: string;
-  service: string;
-  region: string;
-  account: string;
-  resource: string;
-}
-
-export interface UrnFunctions {
-  parse(value: unknown): null | IParsedSun;
-  format(parsed: IParsedSun): null | IParsedSun;
-  /**
-   * Requires populated urn or else validation will fail for null values
-   * @param parsed
-   */
-  validate(parsed: IPopulatedParsedSun): null | string[];
-  build(parsed: Partial<IParsedSun>): IParsedSun;
-}
-```
-
 ## Custom validation rules example
 
 Using an AWS arn as an example, you would probably want to add some custom validation to ensure `partition`, `region`, `service` are all valid.
 
 You could do that like so:
 
-```js
+```ts
+import { createUrnUtil, generateDefaultValidationRules } from 'urn-lib';
 const components = [
   'partition',
   'service',
@@ -268,7 +235,7 @@ const components = [
 const customRules = [
   // this makes sure all parts of the urn are valid RFC2141 NID strings
   // without this there would be **no validation** done any any part
-  ...URN.generateDefaultValidationRules(components)
+  ...generateDefaultValidationRules(components)
 ];
 // rules are tuples: [
 //    string, // the name of the component to target 
@@ -281,7 +248,7 @@ const rule = [
   value => value !== 'aws-cn', // since not supported, we make sure value doesn't equal that value
 ];
 customRules.push(rule);
-const arn = URN.create('arn', {
+const arn = createUrnUtil('arn', {
   components,
   allowEmpty:       true,
   validationRules:  customRules,
@@ -293,6 +260,14 @@ console.log('invalid', arn.validate(china)); // => invalid [ 'validation failed 
 ```
 
 ## Release notes
+
+### `2.0.0`
+
+- Breaking change: Switched to webpack and changed structure of module to better work with importing named symbols directly
+- Potentially breaking change: Dropped testing for node v8
+- Warning: Switched to typescript and added some basic types.  If you have your own ts types this may be a breaking change for you.
+
+Nothing significant changed with the API and the goal is for 100% backwards compat.
 
 ### `1.2.0`
 

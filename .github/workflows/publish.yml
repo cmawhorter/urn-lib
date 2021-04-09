@@ -1,0 +1,33 @@
+name: Publish
+
+env:
+  NODE_VERSION: 12
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
+      # Log versions
+      - run: npm --version; node --version
+      - run: echo "PKG_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+      # Assert release tag version matches the version we're publishing
+      # NOTE: release tags **must** start with a lowercase "v" and then version
+      - run: |
+          if [ "v${{env.PKG_VERSION}}" != "${{ github.event.release.tag_name }}" ]; then
+            echo 'Error! Package version "v${{env.PKG_VERSION}}" does not match tag version "${{ github.event.release.tag_name }}"'
+            exit 1
+          fi
+      - run: echo 'Publishing version - ${{env.PKG_VERSION}}'
+      - run: npm ci
+      - run: npm publish --dry-run
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
