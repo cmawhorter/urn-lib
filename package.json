@@ -1,6 +1,6 @@
 {
   "name": "urn-lib",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0",
   "description": "Creating, parsing, and validating",
   "main": "dist/urn-lib.cjs.js",
   "browser": "dist/urn-lib.umd.js",
