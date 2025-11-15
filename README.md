@@ -1,4 +1,4 @@
-# urn [![Build Status](https://travis-ci.org/cmawhorter/urn-lib.svg?branch=master)](http://travis-ci.org/cmawhorter/urn-lib)
+# urn [![Test](https://github.com/cmawhorter/urn-lib/actions/workflows/test.yml/badge.svg)](https://github.com/cmawhorter/urn-lib/actions/workflows/test.yml)
 Parse, validate, and format RFC2141 urn strings or custom implementations like AWS' arn.
 
 Yes, it's true that RFC2141 is deprecated (replaced by URI), but urn is still a concise, useful way for creating unique and human readable strings to identify things.  AWS arn is urn, for example.
