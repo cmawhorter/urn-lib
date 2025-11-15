@@ -10,7 +10,7 @@ const components = [
   'resource',
 ];
 
-const componentsWithProtocol = ['protocol'].concat(components);
+const componentsWithProtocol = ['protocol', ...components];
 
 const arn = create('arn', {
   components: components,

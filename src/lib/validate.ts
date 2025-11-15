@@ -1,4 +1,4 @@
-import { Item, ValidationRule, ValidationRuleObject } from '../typings';
+import type { Item, ValidationRule, ValidationRuleObject } from '../typings';
 
 export const RFC2141_NID_VALID = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-';
 
@@ -98,8 +98,9 @@ export function urnObject(
           errors.push(`validation failed for ${propertyName}: ${failureMessage}`);
         }
       }
-      catch(err) {
-        errors.push(`validation error for ${propertyName}: ${err.message}`);
+      catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : 'unknown error';
+        errors.push(`validation error for ${propertyName}: ${errMsg}`);
       }
     });
   return errors.length ? errors : null;

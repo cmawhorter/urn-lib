@@ -6,13 +6,34 @@ describe('format', function() {
   const components = [ 'nid', 'nss' ];
   const separator = ':';
   it('should format a parsed urn to a string', function() {
-    expect(formatUrn(null, components, separator, { protocol: protocol, nid: 'i', nss: 's' })).to.equal('urn:i:s');
+    expect(
+      formatUrn(
+        null,
+        components,
+        separator,
+        {protocol, nid: 'i', nss: 's'}
+      )
+    ).to.equal('urn:i:s');
   });
   it('should format a long urn', function() {
-    expect(formatUrn(null, [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ], separator, { protocol: protocol, a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f', g: 'g' })).to.equal('urn:a:b:c:d:e:f:g');
+    expect(
+      formatUrn(
+        null,
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+        separator,
+        {protocol, a: 'a', b: 'b', c: 'c', d: 'd', e: 'e', f: 'f', g: 'g'}
+      )
+    ).to.equal('urn:a:b:c:d:e:f:g');
   });
   it('should default to empty strings for missing or invalid', function() {
-    expect(formatUrn(null, [ 'a', 'b', 'c', 'd', 'e', 'f', 'g' ], separator, { protocol: protocol, a: 'a', g: 'g' })).to.equal('urn:a::::::g');
+    expect(
+      formatUrn(
+        null,
+        ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+        separator,
+        {protocol, a: 'a', g: 'g'}
+      )
+    ).to.equal('urn:a::::::g');
   });
   it('should throw if protocol is missing', function() {
     expect(function() {
