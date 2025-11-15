@@ -57,4 +57,35 @@ describe('format', function() {
     // should always use protocol passed with object
     expect(formatUrn('blah', components, separator, { protocol: protocol, nid: 'i', nss: 's' })).to.equal('urn:i:s');
   });
+  it('should should not throw by default, if protocol does not match #8', function() {
+    const resultDef = formatUrn('blah', components, separator, { protocol: 'invalid', nid: 'i', nss: 's' });
+    expect(resultDef).to.equal('invalid:i:s');
+    const resultExpl = formatUrn(
+      'blah',
+      components,
+      separator,
+      { protocol: 'invalid', nid: 'i', nss: 's' },
+      {strictProtocol: false}
+    );
+    expect(resultExpl).to.equal('invalid:i:s');
+  });
+  it('should should throw, if strictProtocol enabled and protocol does not match #8', function() {
+    expect(() => {
+      formatUrn(
+        'blah',
+        components,
+        separator,
+        { protocol: 'invalid', nid: 'i', nss: 's' },
+        {strictProtocol: true}
+      );
+    }).to.throw('protocol mismatch');
+    const result = formatUrn(
+      'blah',
+      components,
+      separator,
+      { protocol: 'blah', nid: 'i', nss: 's' },
+      {strictProtocol: true}
+    );
+    expect(result).to.equal('blah:i:s');
+  });
 });
