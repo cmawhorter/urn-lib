@@ -1,42 +1,64 @@
-import { Item } from '../typings';
-import { isString } from './validate';
+import { kParsedProtocol } from '../constants';
+import { UrnComponentNames, ParsedUrnRecord, DeprecatedParsedProtocol } from '../typings';
+import { isString, getProtocol, getStringValue, getValue } from './common';
 
-export function formatUrn(
+export function formatUrn<T extends UrnComponentNames>(
   rawProtocol: null | string,
-  components: string[],
+  components: T,
   separator: string,
-  parsed: Item<string, null | string>,
-  {
-    strictProtocol = false,
-  }: {
-    /**
-     * Default false. If true, protocol MUST be passed and MUST match parsed protocol
-     */
-    strictProtocol?: boolean;
-  } = {}
+  parsed: DeprecatedParsedProtocol<Partial<ParsedUrnRecord<T>>>
 ): string {
-  const parsedProto = parsed && parsed.protocol ? parsed.protocol : null;
-  const protocol = parsedProto ?? rawProtocol;
+  const protocol = parsed.protocol ?? getProtocol(parsed) ?? rawProtocol ?? null;
   if (!isString(protocol)) {
     throw new Error('protocol is missing or invalid');
   }
-  if (strictProtocol && rawProtocol !== parsedProto) {
-    throw new Error(`protocol mismatch; "${protocol ?? '[missing]'}" was passed but parse is "${parsedProto ?? '[missing]'}"`);
+  let formatted = '';
+  for (const name of components) {
+    formatted += separator + getStringValue(parsed, name);
   }
-  return protocol + separator + components.map(name => !isString(parsed[name]) ? '' : parsed[name]).join(separator);
+  // render as "${proto}:" in the event components is empty for some reason
+  return protocol + (formatted || separator);
 }
 
-export function buildUrn(
+export function formatUrnStrict<T extends UrnComponentNames>(
   protocol: string,
-  components: string[],
-  data: Item<string, unknown> = {}
-): Item<string, null | string> {
-  data = data || {};
-  const result: Item<string, null | string> = { protocol };
-  components
-    .forEach(name => {
-      const value = data[name];
-      result[name] = isString(value) ? value : null;
-    });
-  return result;
+  components: T,
+  separator: string,
+  parsed: Partial<ParsedUrnRecord<T>>
+): string {
+  const parsedProto = getProtocol(parsed);
+  if (protocol !== parsedProto) {
+    throw new Error(`protocol mismatch; "${protocol}" was passed but parse is "${parsedProto ?? '[missing]'}"`);
+  }
+  return formatUrn(protocol, components, separator, parsed);
+}
+
+export function buildUrnLegacy<T extends UrnComponentNames>(
+  protocol: string,
+  components: T,
+  data: DeprecatedParsedProtocol<Partial<ParsedUrnRecord<T>>> = {}
+): ParsedUrnRecord<T> & {protocol: string} {
+  // NOTE: for more complete backwards compat, we have to reimplement this function separately to ensure key order matches (tests expect this)
+  const entries: Array<[T[number] | typeof kParsedProtocol, null | string]> = [
+    [kParsedProtocol, protocol],
+    ['protocol', protocol],
+  ];
+  for (const name of components) {
+    entries.push([name, getValue(data, name)]);
+  }
+  return Object.fromEntries(entries) as ParsedUrnRecord<T> & {protocol: string};
+}
+
+export function buildUrn<T extends UrnComponentNames>(
+  protocol: string,
+  components: T,
+  data: Partial<ParsedUrnRecord<T>> = {}
+): ParsedUrnRecord<T> {
+  const entries: Array<[T[number] | typeof kParsedProtocol, null | string]> = [
+    [kParsedProtocol, protocol],
+  ];
+  for (const name of components) {
+    entries.push([name, getValue(data, name)]);
+  }
+  return Object.fromEntries(entries) as ParsedUrnRecord<T>;
 }

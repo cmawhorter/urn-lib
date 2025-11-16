@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { RFC2141 } from '../src/main';
 
 describe('RFC2141', function() {
-  it('should export an instance for parsing RFC2141 urns', function() {
+  it('should export an instance for parsing RFC2141 urns [Legacy 3.x]', function() {
     const canned = [
       'urn:isbn:0451450523',
       'urn:isan:0000-0000-9E59-0000-O-0000-0000-2',
@@ -15,8 +15,9 @@ describe('RFC2141', function() {
       'urn:lex:eu:council:directive:2010-03-09;2010-19-UE',
     ];
     for (const urn of canned) {
-      const parsed = RFC2141.parse(urn);
-      const formatted = RFC2141.format(parsed as any);
+      const parsed = RFC2141.parse(urn)!;
+      expect(parsed.protocol).to.equal('urn');
+      const formatted = RFC2141.format(parsed);
       expect(formatted).to.equal(urn, `failed: ${urn}`);
     }
   });

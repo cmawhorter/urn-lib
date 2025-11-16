@@ -1,10 +1,12 @@
-import type { Item, ValidationRule, ValidationRuleObject } from '../typings';
+import { PREFIX } from '../schemes/rfc2141';
+import type { DeprecatedParsedProtocol, ParsedUrnRecord, UnknownParsedRecord, UrnComponentNames, ValidationRule, ValidationRuleObject } from '../typings';
+import { getProtocol, getValue, isProtocol, isString, isValid } from './common';
 
 export const RFC2141_NID_VALID = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-';
 
 // generates an array of rules that treats all but the last component
 // as an nid string (with limited valid charset)
-export function generateDefaultValidationRules(components: string[]): ValidationRule[] {
+export function generateDefaultValidationRules(components: UrnComponentNames): ValidationRule[] {
   const lastIndex = components.length - 1;
   const rules: ValidationRule[] = [];
   for (let i=0; i < lastIndex; i++) {
@@ -36,7 +38,7 @@ export function isRfc2141NidString(
     }
     // To avoid confusion with the "urn:" identifier, the NID "urn" is
     // reserved and MUST NOT be used.
-    if ('urn' === str.toLowerCase()) {
+    if (PREFIX === str.toLowerCase()) {
       return false;
     }
   }
@@ -51,57 +53,35 @@ export function isRfc2141NidString(
   return true;
 }
 
-export function isString(value: unknown): value is string {
-  return typeof value === 'string';
-}
-
-export function isProtocol(
-  protocol: string,
-  parsed: Item<string, unknown>
-): boolean {
-  const value = parsed.protocol;
-  if (!isString(value)) return false;
-  return protocol.toLowerCase() === value.toLowerCase();
-}
-
-export function isValid(
-  parsed: Item<string, unknown>,
-  propertyName: string,
-  allowZeroLength: boolean = false
-): boolean {
-  const value = parsed[propertyName];
-  return isString(value) && (allowZeroLength || value.length > 0);
-}
-
-export function urnObject(
+export function urnObject<T extends UrnComponentNames>(
   protocol: string,
   customRules: ValidationRule[],
   allowZeroLength: boolean,
-  parsed: Item<string, unknown>
+  parsed: ParsedUrnRecord<T> | DeprecatedParsedProtocol<UnknownParsedRecord>,
+  components?: T
 ): null | string[] {
+  const allNames = new Set<T[number] | 'protocol'>([...Object.keys(parsed), ...(components ?? [])]);
   const errors: string[] = [];
-  Object.keys(parsed)
-    .forEach(propertyName => {
-      if (!isValid(parsed, propertyName, allowZeroLength)) {
-        errors.push(`validation failed for ${propertyName}: invalid value`);
-      }
-    });
-  if (!isProtocol(protocol, parsed)) {
-    errors.push(`validation failed for protocol: expected ${protocol} but got ${parsed.protocol}`);
+  for (const propertyName of allNames) {
+    if (!isValid(parsed, propertyName, allowZeroLength)) {
+      errors.push(`validation failed for ${propertyName}: invalid value`);
+    }
   }
-  customRules
-    .forEach(rule => {
-      const [propertyName, failureMessage, test] = rule;
-      try {
-        const value = parsed[propertyName];
-        if (true !== test(value)) {
-          errors.push(`validation failed for ${propertyName}: ${failureMessage}`);
-        }
+  if (!isProtocol(protocol, parsed)) {
+    errors.push(`validation failed for protocol: expected "${protocol}" but got "${getProtocol(parsed) ?? '[missing]'}"`);
+  }
+  for (const rule of customRules) {
+    const [propertyName, failureMessage, test] = rule;
+    try {
+      const value = getValue(parsed, propertyName);
+      if (true !== test(value)) {
+        errors.push(`validation failed for ${propertyName}: ${failureMessage}`);
       }
-      catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : 'unknown error';
-        errors.push(`validation error for ${propertyName}: ${errMsg}`);
-      }
-    });
+    }
+    catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : 'unknown error';
+      errors.push(`validation error for ${propertyName}: ${errMsg}`);
+    }
+  }
   return errors.length ? errors : null;
 }

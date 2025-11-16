@@ -1,25 +1,40 @@
-import { Item } from '../typings';
-import { isString } from './validate';
+import { kParsedProtocol } from '../constants';
+import { DeprecatedParsedProtocol, ParsedUrnRecord, UrnComponentNames } from '../typings';
+import { isString } from './common';
 
-export function parseUrn(
-  components: string[],
+export function parseUrnLegacy<T extends UrnComponentNames> (
+  components: T,
   separator: string,
   value: unknown
-): null | Item<string, null | string> {
+): null | DeprecatedParsedProtocol<ParsedUrnRecord<T>> {
+  const parsed = parseUrn(components, separator, value);
+  if (!parsed) return null;
+  const entries = [...Object.entries(parsed)];
+  entries.unshift(['protocol', parsed[kParsedProtocol]]);
+  return Object.fromEntries(entries) as DeprecatedParsedProtocol<ParsedUrnRecord<T>>;
+}
+
+export function parseUrn<T extends UrnComponentNames> (
+  components: T,
+  separator: string,
+  value: unknown
+): null | ParsedUrnRecord<T> {
   if (!Array.isArray(components) || components.length < 1) throw new Error('components not valid');
   if (!isString(value)) return null;
   const parts = value.split(separator);
   if (parts.length < 2) return null;
-  const protocol = parts.shift(); // all schemes have a protocol
-  const parsed: Item<string, null | string> = { protocol };
+  const protocol = parts.shift()!; // all schemes have a protocol
+  const entries: Array<[string | typeof kParsedProtocol, null | string]> = [
+    [kParsedProtocol, protocol],
+  ];
   const len = components.length - 1; // last component treated differently
   for (let i=0; i < len; i++) {
     const name = components[i];
-    parsed[name] = parts.length ? parts.shift() : null;
+    entries.push([name, parts.length ? parts.shift()! : null]);
   }
   // concat last component.  anything beyond what's defined in components
   // is a single string that belongs to last part
   const lastPartName = components[len];
-  parsed[lastPartName]  = parts.length ? parts.join(separator) : null;
-  return parsed;
+  entries.push([lastPartName, parts.length ? parts.join(separator) : null]);
+  return Object.fromEntries(entries) as ParsedUrnRecord<T>;
 }

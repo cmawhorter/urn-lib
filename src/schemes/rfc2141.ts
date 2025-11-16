@@ -4,4 +4,4 @@ export const SEPARATOR = ':';
 export const COMPONENTS = [
   'nid',
   'nss',
-];
+] as const;

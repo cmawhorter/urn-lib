@@ -5,4 +5,5 @@ export const RFC2141 = createUrnUtil(PREFIX, {
   components:       COMPONENTS,
   separator:        SEPARATOR,
   allowEmpty:       false,
+  enableDeprecatedProtocol: true,
 });
