@@ -1,4 +1,4 @@
-import { kParsedProtocol } from '../constants';
+import { kLegacyParsedProtocol, kParsedProtocol } from '../constants';
 import { DeprecatedParsedProtocol, ParsedUrnRecord, UrnComponentNames } from '../typings';
 import { isString } from './common';
 
@@ -10,7 +10,7 @@ export function parseUrnLegacy<T extends UrnComponentNames> (
   const parsed = parseUrn(components, separator, value);
   if (!parsed) return null;
   const entries = [...Object.entries(parsed)];
-  entries.unshift(['protocol', parsed[kParsedProtocol]]);
+  entries.unshift([kLegacyParsedProtocol, parsed[kParsedProtocol]]);
   return Object.fromEntries(entries) as DeprecatedParsedProtocol<ParsedUrnRecord<T>>;
 }
 

@@ -1,10 +1,16 @@
-import { kParsedProtocol } from '../constants';
+import { kParsedProtocol, kLegacyParsedProtocol } from '../constants';
 import type { UnknownParsedRecord, ParsedUrnRecord, DeprecatedParsedProtocol, LiteralUnion } from '../typings';
 
 type UnknownPropertyName<T extends ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>> = LiteralUnion<Extract<keyof T, string>>;
 
 export function isString(value: unknown): value is string {
   return typeof value === 'string';
+}
+
+export function isObject(
+  value: unknown
+): value is Record<string, unknown> {
+  return value && typeof value === 'object' && !Array.isArray(value) ? true : false;
 }
 
 export function getValue<T extends ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>>(
@@ -34,7 +40,7 @@ export function isValid<T extends ParsedUrnRecord | DeprecatedParsedProtocol<Unk
 export function getProtocol(
   parsed: ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>
 ): null | string {
-  const value = parsed[kParsedProtocol] ?? parsed.protocol ?? null;
+  const value = parsed[kParsedProtocol] ?? parsed[kLegacyParsedProtocol] ?? null;
   return isString(value) ? value : null;
 }
 

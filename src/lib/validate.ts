@@ -1,6 +1,7 @@
+import { kLegacyParsedProtocol } from '../constants';
 import { PREFIX } from '../schemes/rfc2141';
-import type { DeprecatedParsedProtocol, ParsedUrnRecord, UnknownParsedRecord, UrnComponentNames, ValidationRule, ValidationRuleObject } from '../typings';
-import { getProtocol, getValue, isProtocol, isString, isValid } from './common';
+import type { DeprecatedParsedProtocol, FormattedUrn, ParsedUrnRecord, UnknownParsedRecord, UrnComponentNames, ValidationRule, ValidationRuleObject } from '../typings';
+import { getProtocol, getValue, isProtocol, isString, isObject, isValid } from './common';
 
 export const RFC2141_NID_VALID = new Set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-'.split(''));
 
@@ -60,7 +61,7 @@ export function urnObject<T extends UrnComponentNames>(
   parsed: ParsedUrnRecord<T> | DeprecatedParsedProtocol<UnknownParsedRecord>,
   components?: T
 ): null | string[] {
-  const allNames = new Set<T[number] | 'protocol'>([...Object.keys(parsed), ...(components ?? [])]);
+  const allNames = new Set<T[number] | typeof kLegacyParsedProtocol>([...Object.keys(parsed), ...(components ?? [])]);
   const errors: string[] = [];
   for (const propertyName of allNames) {
     if (!isValid(parsed, propertyName, allowZeroLength)) {
@@ -84,4 +85,44 @@ export function urnObject<T extends UrnComponentNames>(
     }
   }
   return errors.length ? errors : null;
+}
+
+export function validUrn<
+  TProt extends string,
+  TSep extends string
+>(
+  protocol: TProt,
+  separator: TSep,
+  value: unknown
+): value is FormattedUrn<TProt, TSep> {
+  if (!isString(value)) return false;
+  return value.startsWith(`${protocol}${separator}`) ? true : false;
+}
+
+export function validParsedUrn<
+  TProt extends string,
+  TComp extends UrnComponentNames
+>(
+  {
+    protocol,
+    components,
+    allowZeroLength = false,
+    customRules = [],
+  }: {
+    protocol: TProt;
+    components: TComp;
+    customRules?: ValidationRule[];
+    allowZeroLength?: boolean;
+  },
+  value: unknown
+): value is ParsedUrnRecord<TComp> {
+  if (!isObject(value)) return false;
+  const errors = urnObject(
+    protocol,
+    customRules,
+    allowZeroLength,
+    value,
+    components
+  );
+  return errors === null;
 }

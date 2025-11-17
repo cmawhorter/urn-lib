@@ -1,5 +1,5 @@
-import { kParsedProtocol } from '../constants';
-import { UrnComponentNames, ParsedUrnRecord, DeprecatedParsedProtocol } from '../typings';
+import { kLegacyParsedProtocol, kParsedProtocol } from '../constants';
+import { UrnComponentNames, ParsedUrnRecord, DeprecatedParsedProtocol, FormattedUrn } from '../typings';
 import { isString, getProtocol, getStringValue, getValue } from './common';
 
 export function formatUrn<T extends UrnComponentNames>(
@@ -8,7 +8,7 @@ export function formatUrn<T extends UrnComponentNames>(
   separator: string,
   parsed: DeprecatedParsedProtocol<Partial<ParsedUrnRecord<T>>>
 ): string {
-  const protocol = parsed.protocol ?? getProtocol(parsed) ?? rawProtocol ?? null;
+  const protocol = getProtocol(parsed) ?? rawProtocol ?? null;
   if (!isString(protocol)) {
     throw new Error('protocol is missing or invalid');
   }
@@ -20,17 +20,21 @@ export function formatUrn<T extends UrnComponentNames>(
   return protocol + (formatted || separator);
 }
 
-export function formatUrnStrict<T extends UrnComponentNames>(
-  protocol: string,
-  components: T,
-  separator: string,
-  parsed: Partial<ParsedUrnRecord<T>>
-): string {
+export function formatUrnStrict<
+  TProt extends string,
+  TComp extends UrnComponentNames,
+  TSep extends string
+>(
+  protocol: TProt,
+  components: TComp,
+  separator: TSep,
+  parsed: Partial<ParsedUrnRecord<TComp>>
+): FormattedUrn<TProt, TSep> {
   const parsedProto = getProtocol(parsed);
   if (protocol !== parsedProto) {
     throw new Error(`protocol mismatch; "${protocol}" was passed but parse is "${parsedProto ?? '[missing]'}"`);
   }
-  return formatUrn(protocol, components, separator, parsed);
+  return formatUrn(protocol, components, separator, parsed) as FormattedUrn<TProt, TSep>;
 }
 
 export function buildUrnLegacy<T extends UrnComponentNames>(
@@ -41,7 +45,7 @@ export function buildUrnLegacy<T extends UrnComponentNames>(
   // NOTE: for more complete backwards compat, we have to reimplement this function separately to ensure key order matches (tests expect this)
   const entries: Array<[T[number] | typeof kParsedProtocol, null | string]> = [
     [kParsedProtocol, protocol],
-    ['protocol', protocol],
+    [kLegacyParsedProtocol, protocol],
   ];
   for (const name of components) {
     entries.push([name, getValue(data, name)]);

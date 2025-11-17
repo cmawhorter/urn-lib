@@ -85,7 +85,7 @@ describe('UrnUtil', function() {
     });
     it('should parse a string for the scheme and back', function() {
       const str = 'arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy';
-      const parsed = arn.parse(str)!;
+      const parsed = arn.parse(str);
       const formatted = arn.format(parsed);
       expect((parsed as any).protocol).to.equal(undefined);
       expect(parsed).to.deep.equal({
@@ -100,12 +100,12 @@ describe('UrnUtil', function() {
       expect(formatted).to.equal(str);
     });
     it('should parse an string not matching the scheme', function() {
-      const invalidParsed = arn.parse('urn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy')!;
+      const invalidParsed = arn.parse('urn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
       expect(Object.keys(invalidParsed)).to.deep.equal(components);
     });
     it('should validate a string for the custom scheme', function() {
-      const validParsed = arn.parse('arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy')!;
-      const invalidParsed = arn.parse('urn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy')!;
+      const validParsed = arn.parse('arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
+      const invalidParsed = arn.parse('urn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
       expect(arn.validate(validParsed)).to.equal(null);
       expect(arn.validate(invalidParsed)).to.be.an('array');
     });
@@ -134,7 +134,7 @@ describe('UrnUtil', function() {
     it('should parse the example arns', function() {
       const canned = awsExampleUrns;
       canned.forEach(function(urn) {
-        const parsed = arn.parse(urn)!;
+        const parsed = arn.parse(urn);
         const formatted = arn.format(parsed);
         expect(formatted).to.equal(urn);
       });

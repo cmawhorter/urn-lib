@@ -11,7 +11,15 @@ export {
 };
 
 export { generateDefaultValidationRules, urnObject } from './lib/validate';
-export type { ValidationRule, ValidationRuleObject, IParsedUrn, ParsedUrnRecord } from './typings';
+
+export type {
+  ValidationRule,
+  ValidationRuleObject,
+  IParsedUrn,
+  ParsedUrnRecord,
+  FormattedUrn,
+} from './typings';
+
 export { RFC2141 } from './rfc2141';
 export { kParsedProtocol } from './constants';
 

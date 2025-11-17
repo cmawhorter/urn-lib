@@ -1,4 +1,4 @@
-import { kParsedProtocol } from './constants';
+import { kLegacyParsedProtocol, kParsedProtocol } from './constants';
 
 export type LiteralUnion<T extends U, U = string> = T | (U & { zz_IGNORE_ME?: never });
 
@@ -19,7 +19,7 @@ export type DeprecatedParsedProtocol<T> = T & {
    * key named "protocol". This is deprecated and support for this
    * is being removed.
    */
-  protocol?: null | string;
+  [kLegacyParsedProtocol]?: null | string;
 };
 
 export type ValidationRule = [string, string, (value: unknown) => boolean];
@@ -29,3 +29,8 @@ export type ValidationRuleObject = {
   failureMessage: string;
   test: (value: unknown) => boolean;
 };
+
+export type FormattedUrn<
+  TProt extends string,
+  TSep extends string
+> = `${TProt}${TSep}${string}`;
