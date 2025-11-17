@@ -15,7 +15,7 @@ export type UrnLibOptions<TComp extends UrnComponentNames, TSep extends string> 
   /**
    * Default: true
    *
-   * Prior to v4.x the protocol could alternatively be passed inline
+   * Prior to v3.x the protocol could alternatively be passed inline
    * with the parsed object. Support for this is being removed and
    * being migrated to a symbol.
    */

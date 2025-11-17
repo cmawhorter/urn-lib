@@ -54,28 +54,28 @@ describe('parse', () => {
       const nss = 's';
       const components = [ 'nid', 'nss' ];
       const separator = ':';
-      it('should split a string using a separator into a named hash [Legacy 3.x]', function() {
+      it('should split a string using a separator into a named hash [Legacy 2.x]', function() {
         expect(parseUrnLegacy(components, separator, 'urn:i:s')).to.deep.equal({ protocol: protocol, nid: nid, nss: nss });
       });
-      it('should default to null for missing [Legacy 3.x]', function() {
+      it('should default to null for missing [Legacy 2.x]', function() {
         expect(parseUrnLegacy(components, separator, 'urn:i')).to.deep.equal({ protocol: protocol, nid: nid, nss: null });
       });
-      it('should treat extra parts as the last component [Legacy 3.x]', function() {
+      it('should treat extra parts as the last component [Legacy 2.x]', function() {
         const lastComponent = 's:this:should:be:the:last:component:value';
         expect(parseUrnLegacy(components, separator, 'urn:i:'+lastComponent)).to.deep.equal({ protocol: protocol, nid: nid, nss: lastComponent });
       });
-      it('should always parse a protocol [Legacy 3.x]', function() {
+      it('should always parse a protocol [Legacy 2.x]', function() {
         expect(parseUrnLegacy(['blah'], separator, 'urn:a')).to.deep.equal({ protocol: 'urn', blah: 'a' });
       });
-      it('should return null for invalid strings [Legacy 3.x]', function() {
+      it('should return null for invalid strings [Legacy 2.x]', function() {
         expect(parseUrnLegacy(components, separator, null)).to.equal(null);
         expect(parseUrnLegacy(components, separator, '')).to.equal(null);
       });
-      it('should return null for incomplete strings [Legacy 3.x]', function() {
+      it('should return null for incomplete strings [Legacy 2.x]', function() {
         expect(parseUrnLegacy(components, separator, 'urn')).to.equal(null);
         expect(parseUrnLegacy(components, separator, 'urn:')).to.be.an('object');
       });
-      it('should throw if components is invalid [Legacy 3.x]', function() {
+      it('should throw if components is invalid [Legacy 2.x]', function() {
         expect(function() {
           parseUrnLegacy([], separator, 'urn:a:b');
         }).to.throw(/components not valid/);

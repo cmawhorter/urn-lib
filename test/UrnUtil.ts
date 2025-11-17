@@ -3,7 +3,7 @@ import { create, createUrnUtil, kParsedProtocol, UrnUtil, LegacyUrnUtil } from '
 import { expect } from 'chai';
 
 describe('UrnUtil', function() {
-  describe('default deprecated 3.x behavior', () => {
+  describe('default deprecated 2.x behavior', () => {
     const components = [
       'partition',
       'service',
@@ -16,7 +16,7 @@ describe('UrnUtil', function() {
       components: components,
       allowEmpty: true, // support s3-style
     });
-    it('should parse a string for the scheme and back [Legacy 3.x]', function() {
+    it('should parse a string for the scheme and back [Legacy 2.x]', function() {
       const str = 'arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy';
       const parsed = arn.parse(str)!;
       const formatted = arn.format(parsed);
@@ -31,23 +31,23 @@ describe('UrnUtil', function() {
       expect(Object.keys(parsed)).to.deep.equal(componentsWithProtocol);
       expect(formatted).to.equal(str);
     });
-    it('should parse an string not matching the scheme [Legacy 3.x]', function() {
+    it('should parse an string not matching the scheme [Legacy 2.x]', function() {
       const invalidParsed = arn.parse('urn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy')!;
       expect(Object.keys(invalidParsed)).to.deep.equal(componentsWithProtocol);
     });
-    it('should validate a string for the custom scheme [Legacy 3.x]', function() {
+    it('should validate a string for the custom scheme [Legacy 2.x]', function() {
       const validParsed = arn.parse('arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy')!;
       const invalidParsed = arn.parse('urn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy')!;
       expect(arn.validate(validParsed)).to.equal(null);
       expect(arn.validate(invalidParsed)).to.be.an('array');
     });
-    it('should build a valid parsed object with null values [Legacy 3.x]', function() {
+    it('should build a valid parsed object with null values [Legacy 2.x]', function() {
       const constructed = arn.build();
       expect(Object.keys(constructed)).to.deep.equal(componentsWithProtocol);
       expect(constructed.protocol).to.equal('arn');
       expect(constructed.partition).to.equal(null);
     });
-    it('should build a valid parsed object with optional initial values [Legacy 3.x]', function() {
+    it('should build a valid parsed object with optional initial values [Legacy 2.x]', function() {
       const constructed = arn.build({ partition: 'z' });
       expect(Object.keys(constructed)).to.deep.equal(componentsWithProtocol);
       expect(constructed.protocol).to.equal('arn');
@@ -61,7 +61,7 @@ describe('UrnUtil', function() {
       });
       expect(arn.format(parsed)).to.equal('arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
     });
-    it('should parse the example arns [Legacy 3.x]', function() {
+    it('should parse the example arns [Legacy 2.x]', function() {
       const canned = awsExampleUrns;
       canned.forEach(function(urn) {
         const parsed = arn.parse(urn)!;
@@ -70,7 +70,7 @@ describe('UrnUtil', function() {
       });
     });
   });
-  describe('4.x behavior', () => {
+  describe('3.x behavior', () => {
     const components = [
       'partition',
       'service',
