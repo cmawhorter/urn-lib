@@ -1,7 +1,9 @@
 import { kParsedProtocol, kLegacyParsedProtocol } from '../constants';
 import type { UnknownParsedRecord, ParsedUrnRecord, DeprecatedParsedProtocol, LiteralUnion } from '../typings';
 
-type UnknownPropertyName<T extends ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>> = LiteralUnion<Extract<keyof T, string>>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UnknownParsedUrnRecord = ParsedUrnRecord<any>;
+type UnknownPropertyName<T extends UnknownParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>> = LiteralUnion<Extract<keyof T, string>>;
 
 export function isString(value: unknown): value is string {
   return typeof value === 'string';
@@ -13,7 +15,7 @@ export function isObject(
   return value && typeof value === 'object' && !Array.isArray(value) ? true : false;
 }
 
-export function getValue<T extends ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>>(
+export function getValue<T extends UnknownParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>>(
   parsed: T,
   propertyName: UnknownPropertyName<T>
 ): null | string {
@@ -21,14 +23,14 @@ export function getValue<T extends ParsedUrnRecord | DeprecatedParsedProtocol<Un
   return isString(value) ? value : null;
 }
 
-export function getStringValue<T extends ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>>(
+export function getStringValue<T extends UnknownParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>>(
   parsed: T,
   propertyName: UnknownPropertyName<T>
 ): string {
   return getValue(parsed, propertyName) ?? '';
 }
 
-export function isValid<T extends ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>>(
+export function isValid<T extends UnknownParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>>(
   parsed: T,
   propertyName: UnknownPropertyName<T>,
   allowZeroLength: boolean = false
@@ -38,7 +40,7 @@ export function isValid<T extends ParsedUrnRecord | DeprecatedParsedProtocol<Unk
 }
 
 export function getProtocol(
-  parsed: ParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>
+  parsed: UnknownParsedUrnRecord | DeprecatedParsedProtocol<UnknownParsedRecord>
 ): null | string {
   const value = parsed[kParsedProtocol] ?? parsed[kLegacyParsedProtocol] ?? null;
   return isString(value) ? value : null;

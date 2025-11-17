@@ -10,7 +10,12 @@ export {
   parseUrnStrict,
 };
 
-export { generateDefaultValidationRules, urnObject } from './lib/validate';
+export {
+  generateDefaultValidationRules,
+  urnObject,
+  validUrn,
+  validParsedUrn,
+} from './lib/validate';
 
 export type {
   ValidationRule,
@@ -34,3 +39,5 @@ export const create = createUrnUtil;
 
 export type { IUrnUtil } from './IUrnUtil';
 export { UrnUtil } from './UrnUtil';
+export type { ILegacyUrnUtil } from './ILegacyUrnUtil';
+export { LegacyUrnUtil } from './LegacyUrnUtil';

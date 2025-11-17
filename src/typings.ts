@@ -8,7 +8,7 @@ export interface IParsedUrn {
   [kParsedProtocol]: string;
 };
 
-export type ParsedUrnRecord<T extends UrnComponentNames = any> = Record<T[number], null | string> & IParsedUrn;
+export type ParsedUrnRecord<T extends UrnComponentNames> = Record<T[number], null | string> & IParsedUrn;
 
 export type UnknownParsedRecord = (object | Record<string, unknown>) & Partial<IParsedUrn>;
 

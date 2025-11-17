@@ -1,6 +1,7 @@
-import type { IUrnUtil } from './IUrnUtil';
-import { formatUrnStrict, buildUrn } from './lib/format';
-import { parseUrn } from './lib/parse';
+import type { ILegacyUrnUtil } from './ILegacyUrnUtil';
+import type { UrnUtilOptions } from './UrnUtil';
+import { formatUrn, buildUrnLegacy } from './lib/format';
+import { parseUrnLegacy } from './lib/parse';
 import { urnObject, validationRuleObjectToArray } from './lib/validate';
 import type {
   FormattedUrn,
@@ -8,18 +9,10 @@ import type {
   UnknownParsedRecord,
   UrnComponentNames,
   ValidationRule,
-  ValidationRuleObject,
+  DeprecatedParsedProtocol,
 } from './typings';
 
-export type UrnUtilOptions<TProt extends string, TComp extends UrnComponentNames, TSep extends string> = {
-  protocol: TProt;
-  components: TComp;
-  separator: TSep;
-  allowEmpty?: boolean;
-  validationRules?: Array<ValidationRule | ValidationRuleObject>;
-};
-
-export class UrnUtil<TProt extends string, TComp extends UrnComponentNames, TSep extends string> implements IUrnUtil<TProt, TComp, TSep> {
+export class LegacyUrnUtil<TProt extends string, TComp extends UrnComponentNames, TSep extends string> implements ILegacyUrnUtil<TProt, TComp, TSep> {
   public get separator(): TSep {
     return this._separator;
   }
@@ -59,27 +52,23 @@ export class UrnUtil<TProt extends string, TComp extends UrnComponentNames, TSep
     this._allowEmpty = allowEmpty;
   }
 
-  validate(parsed: UnknownParsedRecord | ParsedUrnRecord<TComp>): string[] | null {
+  validate(parsed: DeprecatedParsedProtocol<UnknownParsedRecord | ParsedUrnRecord<TComp>>): string[] | null {
     const {protocol, validationRules, allowEmpty} = this;
     return urnObject(protocol, validationRules, allowEmpty, parsed);
   }
 
-  format(parsed: Partial<ParsedUrnRecord<TComp>>): FormattedUrn<TProt, TSep> {
+  format(parsed: DeprecatedParsedProtocol<Partial<ParsedUrnRecord<TComp>>>): FormattedUrn<TProt, TSep> {
     const {protocol, components, separator} = this;
-    return formatUrnStrict(protocol, components, separator, parsed);
+    return formatUrn(protocol, components, separator, parsed) as FormattedUrn<TProt, TSep>;
   }
 
-  parse(value: unknown): ParsedUrnRecord<TComp> {
+  parse(value: unknown): DeprecatedParsedProtocol<ParsedUrnRecord<TComp>> | null {
     const {components, separator} = this;
-    const result = parseUrn(components, separator, value);
-    if (result === null) {
-      throw new Error('parsing urn failed');
-    }
-    return result;
+    return parseUrnLegacy(components, separator, value);
   }
 
-  build(data?: Partial<ParsedUrnRecord<TComp>>): ParsedUrnRecord<TComp> {
+  build(data?: DeprecatedParsedProtocol<Partial<ParsedUrnRecord<TComp>>>): DeprecatedParsedProtocol<ParsedUrnRecord<TComp>> {
     const {protocol, components} = this;
-    return buildUrn(protocol, components, data);
+    return buildUrnLegacy(protocol, components, data);
   }
 }
