@@ -15,7 +15,7 @@ export type UnknownParsedRecord = (object | Record<string, unknown>) & Partial<I
 export type DeprecatedParsedProtocol<T> = T & {
   /**
    * @deprecated
-   * Prior to v4, the protocol could alternatively be passed as a
+   * Prior to v3.0, the protocol could alternatively be passed as a
    * key named "protocol". This is deprecated and support for this
    * is being removed.
    */

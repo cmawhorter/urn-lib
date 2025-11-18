@@ -1,6 +1,8 @@
 import awsExampleUrns from './__tests__/fixtures/aws-urns';
-import { create, createUrnUtil, kParsedProtocol, UrnUtil, LegacyUrnUtil } from '../src/main';
+import { create, createUrnUtil, kParsedProtocol } from '../src/main';
 import { expect } from 'chai';
+import { LegacyUrnUtil } from '../src/LegacyUrnUtil';
+import { UrnUtil } from '../src/UrnUtil';
 
 describe('UrnUtil', function() {
   describe('default deprecated 2.x behavior', () => {
