@@ -98,8 +98,9 @@ export function urnObject(
           errors.push(`validation failed for ${propertyName}: ${failureMessage}`);
         }
       }
-      catch(err) {
-        errors.push(`validation error for ${propertyName}: ${err.message}`);
+      catch(err: unknown) {
+        const errMessage = err instanceof Error ? err.message : 'unknown error';
+        errors.push(`validation error for ${propertyName}: ${errMessage}`);
       }
     });
   return errors.length ? errors : null;

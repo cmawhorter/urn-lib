@@ -1,25 +1,47 @@
 {
   "name": "urn-lib",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Creating, parsing, and validating",
-  "main": "dist/urn-lib.cjs.js",
-  "browser": "dist/urn-lib.umd.js",
-  "types": "dist/main.d.ts",
+  "type": "module",
+  "main": "dist/main.mjs",
+  "browser": "dist/web.cjs",
+  "types": "dist/src/main.d.ts",
+  "source": "src/main.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/main.d.ts",
+      "node": {
+        "require": "./dist/main.cjs",
+        "default": "./dist/main.mjs"
+      },
+      "browser": "./dist/web.cjs",
+      "default": {
+        "require": "./dist/main.cjs",
+        "default": "./dist/main.mjs"
+      }
+    },
+    "./*": {
+      "types": "./dist/*",
+      "default": null
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "author": {
     "name": "Cory Mawhorter",
     "email": "cory.mawhorter@gmail.com",
     "url": "http://www.mawhorter.net/"
   },
   "scripts": {
-    "build": "webpack -c webpack.config.js",
+    "build": "node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js --config webpack.config.ts",
     "prepublishOnly": "npm test && npm run build",
+    "upgrade": "npx npm-check -u -i '\"{chai,mocha,@types/mocha,@types/chai}\"'",
     "pretest": "npm run lint",
     "test": "npm run testonly",
-    "testonly": "mocha ./test",
-    "lintsource": "eslint --fix ./src",
-    "linttests": "eslint --fix ./test",
-    "lint": "npm run lintsource && npm run linttests",
-    "upgrade": "npm-check --update"
+    "testonly": "npx tsx ./node_modules/.bin/mocha ./test",
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
@@ -30,25 +52,27 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/chai": "^4.2.14",
-    "@types/mocha": "^8.0.4",
-    "@types/node": "^14.14.10",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "@typescript-eslint/parser": "^4.8.2",
-    "chai": "^4.3.4",
-    "eslint": "^7.14.0",
-    "eslint-plugin-import": "^2.22.1",
-    "mocha": "^8.2.1",
-    "npm-check": "^5.9.2",
-    "source-map-loader": "^2.0.1",
-    "source-map-support": "^0.5.19",
-    "ts-loader": "^8.0.11",
-    "ts-node": "^9.0.0",
-    "typescript": "^4.1.2",
-    "webpack": "^5.31.1",
-    "webpack-cli": "^4.2.0"
-  },
-  "files": [
-    "dist/"
-  ]
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-typescript": "^7.28.5",
+    "@eslint/js": "^9.39.0",
+    "@types/chai": "^4.3.14",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.10.1",
+    "@types/webpack-node-externals": "^3.0.4",
+    "babel-loader": "^10.0.0",
+    "chai": "4.x",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "mocha": "^10.4.0",
+    "source-map-loader": "^5.0.0",
+    "source-map-support": "^0.5.21",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "tsafe": "^1.8.12",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-node-externals": "^3.0.0"
+  }
 }
