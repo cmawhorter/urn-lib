@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { RFC2141 } from '../src/main';
+import { RFC2141 } from '../../src/main';
 
 describe('RFC2141', function() {
   it('should export an instance for parsing RFC2141 urns', function() {

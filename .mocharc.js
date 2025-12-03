@@ -1,5 +1,5 @@
 module.exports = {
-  exit: true,
+  recursive: true,
   ignore: [
     './test/__tests__/**/*',
   ],

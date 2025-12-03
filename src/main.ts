@@ -1,15 +1,16 @@
-export { formatUrn, buildUrn } from './lib/format';
-export { parseUrn } from './lib/parse';
-export { generateDefaultValidationRules, urnObject } from './lib/validate';
-export type { ValidationRule, ValidationRuleObject } from './typings';
-export { RFC2141 } from './rfc2141';
-
-import { createUrnUtil } from './util';
-export { createUrnUtil };
-
 /**
  * @deprecated
- * @alias createUrnUtil
+ * Legacy exports to provide continued support for v2.x
  */
-export const create = createUrnUtil;
-
+export {
+  formatUrn,
+  buildUrn,
+  parseUrn,
+  generateDefaultValidationRules,
+  urnObject,
+  RFC2141,
+  createUrnUtil,
+  create,
+  type ValidationRule,
+  type ValidationRuleObject,
+} from './legacy/main';

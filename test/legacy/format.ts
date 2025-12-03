@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { formatUrn } from '../src/lib/format';
+import { formatUrn } from '../../src/legacy/lib/format';
 
 describe('format', function() {
   const protocol = 'urn';

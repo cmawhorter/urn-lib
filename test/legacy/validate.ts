@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import { isProtocol, isRfc2141NidString, isString, isValid, urnObject } from '../src/lib/validate';
-import { ValidationRule } from '../src/typings';
+import { isProtocol, isRfc2141NidString, isString, isValid, urnObject } from '../../src/legacy/lib/validate';
+import { ValidationRule } from '../../src/legacy/typings';
 
 describe('validate', function() {
   describe('#isRfc2141NidString', function() {

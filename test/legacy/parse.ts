@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { parseUrn } from '../src/lib/parse';
+import { parseUrn } from '../../src/legacy/lib/parse';
 
 describe('tokenize', function() {
   const protocol = 'urn';

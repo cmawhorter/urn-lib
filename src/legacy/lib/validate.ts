@@ -1,4 +1,4 @@
-import { Item, ValidationRule, ValidationRuleObject } from '../typings';
+import type { Item, ValidationRule, ValidationRuleObject } from '../typings';
 
 export const RFC2141_NID_VALID = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-';
 
