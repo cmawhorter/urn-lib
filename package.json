@@ -20,6 +20,18 @@
         "default": "./dist/main.mjs"
       }
     },
+    "./legacy": {
+      "types": "./dist/src/legacy/index.d.ts",
+      "node": {
+        "require": "./dist/legacy.cjs",
+        "default": "./dist/legacy.mjs"
+      },
+      "browser": "./dist/legacy_web.cjs",
+      "default": {
+        "require": "./dist/legacy.cjs",
+        "default": "./dist/legacy.mjs"
+      }
+    },
     "./*": {
       "types": "./dist/*",
       "default": null

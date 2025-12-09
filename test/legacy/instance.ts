@@ -1,4 +1,4 @@
-import awsExampleUrns from '../__tests__/fixtures/aws-urns';
+import { awsExampleUrns } from '../__tests__/fixtures/aws-urns';
 import { create } from '../../src/main';
 import { expect } from 'chai';
 

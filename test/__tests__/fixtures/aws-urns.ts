@@ -1,4 +1,4 @@
-export default [
+export const awsExampleUrns = [
   'arn:aws:elasticbeanstalk:us-east-1:123456789012:environment/My App/MyEnvironment',
   'arn:aws:iam::123456789012:user/David',
   'arn:aws:rds:eu-west-1:123456789012:db:mysql-db',

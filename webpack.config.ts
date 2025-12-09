@@ -10,6 +10,7 @@ const mode: Configuration['mode'] = 'production';
 
 const entry: EntryObject = {
   main: './src/main.ts',
+  legacy: './src/legacy/index.ts',
 };
 
 const module: ModuleOptions = {
@@ -61,7 +62,9 @@ const configs: Configuration[] = [
     entry,
     output: {
       path: path.resolve(__dirname, 'dist'),
-      filename: '[name].cjs',
+      filename: (pathData) => {
+        return pathData.chunk?.name === 'main' ? 'web.cjs' : 'legacy_web.cjs';
+      },
       libraryTarget: 'umd',
     },
     externals: [nodeExternals({allowlist})],

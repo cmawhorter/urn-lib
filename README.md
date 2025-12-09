@@ -1,278 +1,304 @@
-# urn [![Build Status](https://travis-ci.org/cmawhorter/urn-lib.svg?branch=master)](http://travis-ci.org/cmawhorter/urn-lib)
+# URN Library v3
 
-Parse, validate, and format RFC2141 urn strings or custom implementations like AWS' arn.
+A complete, RFC-compliant URN (Uniform Resource Name) parser for JavaScript and TypeScript with extensible namespace-specific string (NSS) parsing.
 
-Yes, it's true that RFC2141 is deprecated (replaced by URI), but urn is still a concise, useful way for creating unique and human readable strings to identify things.  AWS arn is urn, for example.
+## Features
 
-No dependencies.  Has tests.  PRs welcome.
+- ✅ **RFC 2141 compliant** - Full support for the original URN specification
+- ✅ **RFC 8141 compliant** - Extended support including RQF components (Resolution, Query, Fragment)
+- ✅ **TypeScript-first** - Comprehensive type definitions with branded types for compile-time safety
+- ✅ **Extensible NSS parsing** - Plugin system for namespace-specific decomposition
+- ✅ **Security-focused** - Input validation, UTF-8 safety, and injection prevention
+- ✅ **Protocol-aware** - Handles `urn:` and custom protocol prefixes
+- ✅ **AWS ARN support** - Built-in parser for Amazon Resource Names
+- ✅ **Functional design** - Pure functions with optional class wrappers
+- ✅ **Zero dependencies** - Lightweight and self-contained
 
-## Getting started
+## Installation
 
-```sh
-npm i urn-lib
+```bash
+npm install urn-lib
 ```
 
-## Usage
+## Quick Start
 
-Using the default RFC2141 parser.
+### Basic Usage (RFC 8141)
 
-```ts
-import { RFC2141 } from 'urn-lib';
-const str = 'urn:ietf:rfc:2648';
-const parsed = RFC2141.parse(str); 
-const validationErrors = RFC2141.validate(parsed);
-const formatted = RFC2141.format(parsed);
-const match = str === formatted;
-console.log(JSON.stringify({ parsed, formatted, validationErrors, match }, null, 2));
+```typescript
+import { createRFC8141Wrapper } from 'urn-lib';
+
+const wrapper = createRFC8141Wrapper();
+
+// Parse URN with protocol
+const urn = wrapper.parse('urn:example:a123,z456');
+console.log(urn.nid.value);      // 'example'
+console.log(urn.nss.encoded);    // 'a123,z456'
+
+// Format back to string
+const formatted = wrapper.format(urn);
+console.log(formatted);          // 'urn:example:a123,z456'
 ```
 
-Output:
+### With RQF Components
 
-```json
-{
-  "parsed": {
-    "protocol": "urn",
-    "nid": "ietf",
-    "nss": "rfc:2648"
-  },
-  "formatted": "urn:ietf:rfc:2648",
-  "validationErrors": null,
-  "match": true
-}
+```typescript
+const urn = wrapper.parse('urn:example:resource?query=value#section');
+console.log(urn.rqf?.query);     // 'query=value'
+console.log(urn.rqf?.fragment);  // 'section'
 ```
 
-## Custom parser and formatter
+### AWS ARN Parsing
 
-`createUrnUtil(protocol, [options])` 
+```typescript
+import { createFullWrapper, NSSRegistry, AWSARNParser } from 'urn-lib';
 
-## Example for AWS arn's
+// Setup registry with AWS ARN parser
+const registry = new NSSRegistry();
+registry.register('arn', new AWSARNParser());
 
-```ts
-import { createUrnUtil } from 'urn-lib';
-const arn = createUrnUtil('arn', {
-  components: [ // protocol is automatically added (protocol = urn or arn or whatever)
-    'partition',
-    'service',
-    'region',
-    'account-id',
-    'resource', // if more:separations:exist after this, they are handled properly
-  ],
-  separator: ':',
-  allowEmpty: true, // arn does stuff like arn:::s3 and stuff
-});
-const str = 'arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy';
-const parsed = arn.parse(str);
-const validationErrors = arn.validate(parsed);
-const formatted = arn.format(parsed);
-const match = str === formatted;
-console.log(JSON.stringify({ parsed, formatted, validationErrors, match }, null, 2));
+const wrapper = createFullWrapper(registry);
+
+// Parse AWS ARN
+const result = wrapper.parseFull('arn:aws:s3:::my-bucket/path/to/object');
+
+console.log(result.urn.nid.value);  // 'arn'
+console.log(result.nss);            // AWS ARN components
+// {
+//   partition: 'aws',
+//   service: 's3',
+//   region: '',
+//   accountId: '',
+//   resource: { type: 'my-bucket', id: 'path', path: 'to/object' }
+// }
 ```
 
-Output:
+### Functional API (without protocol handling)
 
-```json
-{
-  "parsed": {
-    "protocol": "arn",
-    "partition": "aws",
-    "service": "autoscaling",
-    "region": "us-east-1",
-    "account-id": "123456789012",
-    "resource": "scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy"
-  },
-  "formatted": "arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy",
-  "validationErrors": null,
-  "match": true
-}
+```typescript
+import { parseRFC8141, formatRFC8141 } from 'urn-lib';
+
+// Parse without protocol prefix
+const urn = parseRFC8141('example:test');
+const formatted = formatRFC8141(urn);
 ```
 
-## API
+## API Overview
 
-### `generateDefaultValidationRules(components: string[]): ValidationRule[]`
+### Core Functions
 
-Creates an array of validation rules that target each named component in the array.  Returns one default ValidationRule for each component in array. 
-
-Example: 
-```ts
-import { generateDefaultValidationRules } from 'urn-lib';
-// If creating an AWS arn parser:
-generateDefaultValidationRules([ 
-    // no need to add "arn". that is considered the "protocol" and added/handled for you outside of default rules
-    'partition', // these are the named component parts we want to target with the default rules
-    'service',
-    'region',
-    'account-id',
-    'resource',
-  ]
-]);
+#### RFC 2141 Parser
+```typescript
+import { 
+  parseRFC2141,           // Parse RFC 2141 URN
+  formatRFC2141,          // Format URN to string
+  validateRFC2141,        // Validate URN structure
+  createRFC2141Parser,    // Create parser instance
+  createRFC2141Wrapper    // Create protocol-aware wrapper
+} from 'urn-lib';
 ```
 
-### `RFC2141` is `UrnUtil` that meets RFC2141
-
-This just calls create() with the values required to create an rfc 2141 compliant collection of UrnUtil (see below).  You probably don't want this and instead want to create your own calling `createUrnUtil(...)`.
-
-### `createUrnUtil(protocol: string, options: UrnLibOptions}): UrnUtil` 
-### `create(protocol: string, options: UrnLibOptions}): UrnUtil` 
-
-Creates a parser, validator, and formatter using the provided options.
-
-#### `options: UrnLibOptions`
-
-- `options.components`: The names of the component parts of your scheme in order.  This becomes the parsed key names.  Defaults to `[ 'nid', 'nss' ]`
-- `options.allowEmpty`: Whether or not empty strings should be considered valid.  e.g. arn::::s3 would be invalid if this is false. Defaults to `false`
-- `options.separator`: Default is `:` but it can be any character or string.
-- `options.validationRules`: An array of custom validation rules to run.  If none are provided, defaults to using `generateDefaultValidationRules()` (which just makes sure all values are valid RFC2141 NID strings)
-
-### Type: `ValidationRule = [string, string, (value: unknown) => boolean]`
-### Type: `ValidationRuleObject = { name: string; failureMessage: string; test: (value: unknown) => boolean; }`
-
-Define rules using a tuple (ValidationRule) or something easier to maintain (ValidationRuleObject).
-
-- string: component name rule targets
-- string: validation error message if rule doesn't pass 
-- function: returns true if value passes validation
-
-### Type: `UrnUtil`
-
-Calling `createUrnUtil()` returns an object with a collection of bound functions that can be called.
-
-#### `validate(parsed: ParsedUrn): null | string[]`
-
-Takes an already-parsed urn and runs all validation rules.  Will return null if all rules passed or an array of strings that contains the messages for the failed validation rules.
-
-Note: There is currently a bug/feature #7 that will cause validation to fail if ParsedUrn has any null values. (PR welcome)
-
-Example:
-```ts
-import { createUrnUtil } from 'urn-lib';
-const myUrn = createUrnUtil(...);
-const parsedUrn: ParsedUrn = { ... };
-const valid = myUrn.validate(parsedUrn);
-if (Array.isArray(valid)) {
-  console.log('validation failed with error messages:', valid);
-}
+#### RFC 8141 Parser
+```typescript
+import {
+  parseRFC8141,           // Parse RFC 8141 URN with RQF
+  formatRFC8141,          // Format URN to string
+  validateRFC8141,        // Validate URN structure
+  extractRQF,             // Extract RQF components
+  createRFC8141Parser,    // Create parser instance
+  createRFC8141Wrapper    // Create protocol-aware wrapper
+} from 'urn-lib';
 ```
 
-#### `format(parsed: ParsedUrn): string`
+#### NSS Parsers
+```typescript
+import {
+  NSSRegistry,            // Parser registry
+  DefaultNSSParser,       // Opaque NSS parser (fallback)
+  HierarchicalParser,     // Generic hierarchical parser
+  AWSARNParser           // AWS ARN parser
+} from 'urn-lib';
+```
 
-Takes an already-parsed urn and returns the stringified version.  Note that whether or not you've enabled options.allowEmpty, empty values will be included in the result (PR welcome).
+### Protocol Handling
 
-Note: If parsed.protocol exists it is **ignored** and the protocol supplied with create() options is used instead. 
+```typescript
+import {
+  createFullWrapper,          // Full wrapper with registry
+  createURNProtocolHandler,   // Standard 'urn:' handler
+  createProtocolHandler       // Custom protocol handler
+} from 'urn-lib';
+```
 
-Example:
-```ts
-import { createUrnUtil } from 'urn-lib';
-const componentNames = [ 'something', 'else', 'not_included' ];
-const myUrn = createUrnUtil(...);
-const parsedUrn: ParsedUrn = {
-  something: 'value',
-  else: null,
-  // not_included is missing.  it'll still be included in stringified version below regardless of create options.allowEmpty
+## Advanced Usage
+
+### Custom NSS Parser
+
+Create a custom parser for your namespace:
+
+```typescript
+import { INSSParser, ValidationResult, validResult } from 'urn-lib';
+
+type ISBNComponents = {
+  prefix: string;
+  group: string;
+  publisher: string;
+  title: string;
+  checkDigit: string;
 };
-const urn = myUrn.format(parsedUrn);
+
+class ISBNParser implements INSSParser<ISBNComponents> {
+  readonly supportedNID = 'isbn';
+  
+  parse(nss: string): ISBNComponents {
+    // Parse ISBN format
+    const parts = nss.split('-');
+    return {
+      prefix: parts[0],
+      group: parts[1],
+      publisher: parts[2],
+      title: parts[3],
+      checkDigit: parts[4]
+    };
+  }
+  
+  format(components: ISBNComponents): string {
+    return [
+      components.prefix,
+      components.group,
+      components.publisher,
+      components.title,
+      components.checkDigit
+    ].join('-');
+  }
+  
+  validate(components: ISBNComponents): ValidationResult {
+    // Implement ISBN check digit validation
+    return validResult();
+  }
+}
+
+// Register and use
+const registry = new NSSRegistry();
+registry.register('isbn', new ISBNParser());
+
+const wrapper = createFullWrapper(registry);
+const result = wrapper.parseFull('urn:isbn:978-0-306-40615-7');
 ```
 
-#### `parse(value: string): null | ParsedUrn`
+### Validation Modes
 
-Takes an urn string and parses it into component parts or returns null if `value` is not a string.
+```typescript
+// Strict mode (default) - throws on invalid input
+try {
+  const urn = parseRFC2141('invalid:format%ZZ');
+} catch (error) {
+  console.error(error); // URNError: Invalid percent-encoding
+}
 
-#### `build(data: Partial<ParsedUrn>): ParsedUrn`
-
-Allows you to construct arbitrary parsed urns to use with `validate()` or `format()`.
-
-Note: If you provide a protocol to build it is used, but that won't work with format(). See #8.
-
-Note: Build returns null values and there is currently a bug/feature #7 with validate() that will cause validation to fail if ParsedUrn has any null values. (PR welcome)
-
-Example:
-```ts
-import { createUrnUtil } from 'urn-lib';
-// componentNames = [ 'something', 'else', 'not_included' ];
-const myUrn = createUrnUtil(...);
-// parsed will contain full object with all component names set to null, unless provided
-const parsed = myUrn.build({
-  something: 'hello',
+// Permissive mode - returns result, validate manually
+const urn = parseRFC2141('example:test', { 
+  strict: false,
+  allowInvalidEncoding: true 
 });
+const validation = validateRFC2141(urn);
+if (!validation.valid) {
+  console.log(validation.errors);
+}
 ```
 
-### Type: `ParsedUrn = { [key: string]: null | string }`
+### Equivalence Checking
 
-The key will be the component name and the corresponding urn value.
+```typescript
+import { createRFC2141URN, checkRFC2141Equivalence } from 'urn-lib';
 
-Example: Using an AWS arn (This is also available in examples/aws-arn-parser.js)
-```ts
-const componentNames = [
-  'partition',
-  'service',
-  'region',
-  'account-id',
-  'resource',
-];
-const arn = 'arn:aws:autoscaling:us-east-1:...etc...';
-const parsed: ParsedUrn = {
-  partition: 'aws',
-  service: 'autoscaling',
-  region: 'us-east-1',
-  // etc.
-};
+const urn1 = createRFC2141URN('EXAMPLE', 'test');
+const urn2 = createRFC2141URN('example', 'test');
+
+console.log(checkRFC2141Equivalence(urn1, urn2)); // true (NID is case-insensitive)
+console.log(urn1.equals(urn2));                    // true (same as above)
 ```
 
-## Custom validation rules example
+## Type Safety
 
-Using an AWS arn as an example, you would probably want to add some custom validation to ensure `partition`, `region`, `service` are all valid.
+The library uses branded types for compile-time safety:
 
-You could do that like so:
+```typescript
+import type { URNString, NID, NSS, IURN } from 'urn-lib';
 
-```ts
-import { createUrnUtil, generateDefaultValidationRules } from 'urn-lib';
-const components = [
-  'partition',
-  'service',
-  'region',
-  'account-id',
-  'resource',
-];
-const customRules = [
-  // this makes sure all parts of the urn are valid RFC2141 NID strings
-  // without this there would be **no validation** done any any part
-  ...generateDefaultValidationRules(components)
-];
-// rules are tuples: [
-//    string, // the name of the component to target 
-//    string, // an error message to use if when value does not pass validation
-//    (value: unknown) => boolean, // if using default rules, you can assume value: null | string
-// ]
-const rule = [
-  'partition',
-  'the China partition is unsupported',
-  value => value !== 'aws-cn', // since not supported, we make sure value doesn't equal that value
-];
-customRules.push(rule);
+// Branded types prevent mixing different string types
+const nid: NID = 'example' as NID;  // Explicit cast required
+const nss: NSS = 'test' as NSS;
+
+// URN objects are strongly typed
+const urn: IURN = parseRFC2141('example:test');
+```
+
+## Security
+
+The library includes comprehensive security features:
+
+- ✅ Null byte detection and rejection
+- ✅ Control character validation
+- ✅ Length limits (configurable, default 8KB)
+- ✅ Percent-encoding validation
+- ✅ UTF-8 safe string operations
+- ✅ Input sanitization
+
+```typescript
+// Security is enabled by default
+parseRFC2141('example:test\x00');        // throws URNSecurityError
+parseRFC2141('example:' + 'x'.repeat(100000)); // throws (exceeds max length)
+```
+
+## Migration from v2
+
+### V2 API
+```typescript
+import { createUrnUtil } from 'urn-lib/legacy';
+
 const arn = createUrnUtil('arn', {
-  components,
-  allowEmpty:       true,
-  validationRules:  customRules,
+  components: ['protocol', 'partition', 'service', 'region', 'account', 'resource']
 });
-const valid = arn.parse('arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
-console.log('valid', arn.validate(valid)); // => valid null
-const china = arn.parse('arn:aws-cn:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
-console.log('invalid', arn.validate(china)); // => invalid [ 'validation failed for partition: the China partition is unsupported' ]
+const parsed = arn.parse('arn:aws:s3:::bucket');
 ```
 
-## Release notes
+### V3 API
+```typescript
+import { createFullWrapper, NSSRegistry, AWSARNParser } from 'urn-lib';
 
-### `2.0.0`
+const registry = new NSSRegistry();
+registry.register('arn', new AWSARNParser());
+const wrapper = createFullWrapper(registry);
 
-- Breaking change: Switched to webpack and changed structure of module to better work with importing named symbols directly
-- Potentially breaking change: Dropped testing for node v8
-- Warning: Switched to typescript and added some basic types.  If you have your own ts types this may be a breaking change for you.
+const { urn, nss } = wrapper.parseFull('arn:aws:s3:::bucket');
+```
 
-Nothing significant changed with the API and the goal is for 100% backwards compat.
+**Legacy v2 API is still available** via `urn-lib/legacy` for backward compatibility.
 
-### `1.2.0`
+## Standards Compliance
 
-Because of build changes and dropping support (in CI) for older node versions I did a minor bump. Nothing has really changed under the hood though.
+- [RFC 2141](https://www.rfc-editor.org/rfc/rfc2141) - URN Syntax
+- [RFC 8141](https://www.rfc-editor.org/rfc/rfc8141) - Updated URN Syntax
+- [RFC 3986](https://www.rfc-editor.org/rfc/rfc3986) - URI Generic Syntax (for percent-encoding)
 
-- bumped dev dependencies
-- drop CI support for very old node. node versions: 0.12, 4, 5, 6, 7. (Note: urn-lib 1.1.x worked with those versions and nothing has changed to break that support. they're just no longer part of CI. if you find a problem with >= 0.12 open an issue)
-- improve build process
+## License
+
+MIT
+
+## Contributing
+
+Contributions welcome! Please open an issue or submit a PR.
+
+## Changelog
+
+### v3.0.0 (Current)
+- Complete rewrite with RFC 8141 support
+- Extensible NSS parser system
+- TypeScript-first design with branded types
+- Security-focused input validation
+- AWS ARN parser included
+- Protocol handling layer
+- Backward compatible legacy export (`urn-lib/legacy`)
+
+### v2.x
+- Legacy implementation (available as `urn-lib/legacy`)
