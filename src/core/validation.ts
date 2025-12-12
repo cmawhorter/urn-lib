@@ -2,7 +2,26 @@
  * Validation utilities and result handling
  */
 
-import type { ValidationResult, ValidationError, ParserOptions } from './types';
+// import { defaultMaxLength } from './constants';
+import { URNError } from '../errors/URNError';
+// import { URNSecurityError } from './URNSecurityError';
+
+/**
+ * Validation error detail
+ */
+export type ValidationError = {
+  readonly code: string;           // Error code like 'INVALID_NID', 'INVALID_ENCODING'
+  readonly message: string;        // Human-readable error message
+  readonly field?: string;         // Which component failed
+  readonly position?: number;      // Character position if applicable
+};
+
+/**
+ * Result of validation operation
+ */
+export type ValidationResult =
+  | { readonly valid: true }
+  | { readonly valid: false; readonly errors: readonly ValidationError[] };
 
 /**
  * Create a successful validation result
@@ -31,31 +50,6 @@ export function validationError(
 }
 
 /**
- * Custom error class for URN parsing errors
- */
-export class URNError extends Error {
-  constructor(
-    message: string,
-    public readonly code: string,
-    public readonly field?: string,
-    public readonly position?: number
-  ) {
-    super(message);
-    this.name = 'URNError';
-  }
-}
-
-/**
- * Custom error class for security-related errors
- */
-export class URNSecurityError extends URNError {
-  constructor(message: string, code: string = 'SECURITY_ERROR', field?: string) {
-    super(message, code, field);
-    this.name = 'URNSecurityError';
-  }
-}
-
-/**
  * Convert validation result to error (throws if invalid)
  */
 export function assertValid(result: ValidationResult, context?: string): void {
@@ -67,19 +61,6 @@ export function assertValid(result: ValidationResult, context?: string): void {
       firstError.code,
       firstError.field,
       firstError.position
-    );
-  }
-}
-
-/**
- * Validate input length
- */
-export function validateLength(input: string, options: ParserOptions): void {
-  const maxLength = options.maxLength ?? 8192;
-  if (input.length > maxLength) {
-    throw new URNSecurityError(
-      `Input exceeds maximum length of ${maxLength} characters`,
-      'MAX_LENGTH_EXCEEDED'
     );
   }
 }

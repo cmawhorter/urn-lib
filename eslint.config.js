@@ -27,7 +27,7 @@ export default [
     languageOptions: {globals: {...globals.mocha}},
     rules: {
       '@typescript-eslint/no-explicit-any': 0,
-      '@typescript-eslint/no-unused-expressions': ['warn', { allowShortCircuit: true }],
+      '@typescript-eslint/no-unused-expressions': 0,
       '@typescript-eslint/no-unused-vars': 0,
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
     },

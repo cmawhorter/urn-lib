@@ -3,8 +3,7 @@
  */
 
 import { expect } from 'chai';
-import { parseRFC2141 } from '../../src/parsers/rfc2141';
-import { sanitizeInput } from '../../src/utils/security';
+import { sanitizeInput } from '../../../src/utils/security';
 
 describe('Security', () => {
   describe('Null byte rejection', () => {
@@ -30,7 +29,7 @@ describe('Security', () => {
     it('should accept URN within default limit', () => {
       const nss = 'x'.repeat(1000);
       const urn = parseRFC2141(`example:${nss}`);
-      expect(urn.nss.encoded).to.have.length(1000);
+      expect(urn.nss).to.have.length(1000);
     });
 
     it('should respect custom length limits', () => {
@@ -54,7 +53,7 @@ describe('Security', () => {
 
     it('should accept valid percent-encoding', () => {
       const urn = parseRFC2141('example:test%20abc');
-      expect(urn.nss.encoded).to.equal('test%20abc');
+      expect(urn.nss).to.equal('test%20abc');
     });
 
     it('should allow invalid encoding in permissive mode', () => {
@@ -62,7 +61,7 @@ describe('Security', () => {
         strict: false,
         allowInvalidEncoding: true
       });
-      expect(urn.nss.encoded).to.equal('test%ZZ');
+      expect(urn.nss).to.equal('test%ZZ');
     });
   });
 
@@ -76,7 +75,7 @@ describe('Security', () => {
         strict: false,
         allowControlChars: true
       });
-      expect(urn.nss.encoded).to.include('\x01');
+      expect(urn.nss).to.include('\x01');
     });
 
     it('should reject encoded control characters in NSS by default', () => {
@@ -87,7 +86,7 @@ describe('Security', () => {
   describe('Injection attacks', () => {
     it('should handle URN with special characters safely', () => {
       const urn = parseRFC2141('example:test%27%22');
-      expect(urn.nss.encoded).to.equal('test%27%22');
+      expect(urn.nss).to.equal('test%27%22');
     });
 
     it('should not be vulnerable to ReDoS with many colons', () => {
@@ -103,14 +102,14 @@ describe('Security', () => {
 
     it('should handle very short valid URN', () => {
       const urn = parseRFC2141('ex:a');
-      expect(urn.nid.value).to.equal('ex');
-      expect(urn.nss.encoded).to.equal('a');
+      expect(urn.nid).to.equal('ex');
+      expect(urn.nss).to.equal('a');
     });
 
     it('should handle maximum valid NID length', () => {
       const nid = 'a' + 'b'.repeat(29) + 'c'; // 31 chars
       const urn = parseRFC2141(`${nid}:test`);
-      expect(urn.nid.value).to.equal(nid);
+      expect(urn.nid).to.equal(nid);
     });
   });
 });
