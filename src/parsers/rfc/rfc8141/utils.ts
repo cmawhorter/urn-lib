@@ -1,11 +1,11 @@
 import { URNError } from '../../../errors/URNError';
 import { ERR_INVALID_URN } from '../constants';
+import type { ParsedRfcUrn } from '../types';
+import { fComponentPrefix, qComponentPrefix, rComponentPrefix } from './constants';
 
 const rfcSeparator = ':';
 
-export type ParsedRfc8141Urn = {
-  nid: string;
-  nss: string;
+export type ParsedRfc8141Urn = ParsedRfcUrn & {
   rComponent: string;
   qComponent: string;
   fComponent: string;
@@ -14,21 +14,21 @@ export type ParsedRfc8141Urn = {
 export function parseRfc8141Urn(input: string): ParsedRfc8141Urn {
   let remaining = input;
   let fComponent = '';
-  const fragmentIndex = remaining.indexOf('#');
+  const fragmentIndex = remaining.indexOf(fComponentPrefix);
   if (fragmentIndex > -1) {
-    fComponent = remaining.slice(fragmentIndex + 1);
+    fComponent = remaining.slice(fragmentIndex);
     remaining = remaining.slice(0, fragmentIndex);
   }
   let qComponent = '';
-  const qIndex = remaining.indexOf('?=');
+  const qIndex = remaining.indexOf(qComponentPrefix);
   if (qIndex > -1) {
-    qComponent = remaining.slice(qIndex + 2);
+    qComponent = remaining.slice(qIndex);
     remaining = remaining.slice(0, qIndex);
   }
   let rComponent = '';
-  const rIndex = remaining.indexOf('?+');
+  const rIndex = remaining.indexOf(rComponentPrefix);
   if (rIndex > -1) {
-    rComponent = remaining.slice(rIndex + 2);
+    rComponent = remaining.slice(rIndex);
     remaining = remaining.slice(0, rIndex);
   }
   const colonIndex = remaining.indexOf(rfcSeparator);
@@ -74,15 +74,10 @@ export function parseRfc8141Urn(input: string): ParsedRfc8141Urn {
 }
 
 export function formatRfc8141Urn(parsed: ParsedRfc8141Urn): string {
-  let result = parsed.nid.toLowerCase() + rfcSeparator + parsed.nss;
-  if (parsed.rComponent) {
-    result += `?+${parsed.rComponent}`;
-  }
-  if (parsed.qComponent) {
-    result += `?=${parsed.qComponent}`;
-  }
-  if (parsed.fComponent) {
-    result += `#${parsed.fComponent}`;
-  }
-  return result;
+  return parsed.nid.toLowerCase()
+    + rfcSeparator
+    + parsed.nss
+    + parsed.rComponent
+    + parsed.qComponent
+    + parsed.fComponent;
 }

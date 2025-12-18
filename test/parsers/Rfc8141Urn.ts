@@ -31,7 +31,7 @@ describe('Rfc8141Urn', () => {
       const urn = new Rfc8141Urn('urn:example:foo?+bar');
       expect(urn.nid).to.equal('example');
       expect(urn.nss).to.equal('foo');
-      expect(urn.rComponent).to.equal('bar');
+      expect(urn.rComponent).to.equal('?+bar');
       expect(urn.qComponent).to.equal('');
       expect(urn.fComponent).to.equal('');
     });
@@ -40,7 +40,7 @@ describe('Rfc8141Urn', () => {
       expect(urn.nid).to.equal('example');
       expect(urn.nss).to.equal('foo');
       expect(urn.rComponent).to.equal('');
-      expect(urn.qComponent).to.equal('bar');
+      expect(urn.qComponent).to.equal('?=bar');
       expect(urn.fComponent).to.equal('');
     });
     it('should parse URN with f-component', () => {
@@ -49,15 +49,15 @@ describe('Rfc8141Urn', () => {
       expect(urn.nss).to.equal('foo');
       expect(urn.rComponent).to.equal('');
       expect(urn.qComponent).to.equal('');
-      expect(urn.fComponent).to.equal('bar');
+      expect(urn.fComponent).to.equal('#bar');
     });
     it('should parse URN with all components', () => {
       const urn = new Rfc8141Urn('urn:example:foo?+rcomp?=qcomp#fcomp');
       expect(urn.nid).to.equal('example');
       expect(urn.nss).to.equal('foo');
-      expect(urn.rComponent).to.equal('rcomp');
-      expect(urn.qComponent).to.equal('qcomp');
-      expect(urn.fComponent).to.equal('fcomp');
+      expect(urn.rComponent).to.equal('?+rcomp');
+      expect(urn.qComponent).to.equal('?=qcomp');
+      expect(urn.fComponent).to.equal('#fcomp');
     });
     it('should normalize NID to lowercase', () => {
       const urn = new Rfc8141Urn('urn:EXAMPLE:foo');
@@ -97,18 +97,18 @@ describe('Rfc8141Urn', () => {
       urn.ref = 'urn:test:bar?+r?=q#f';
       expect(urn.nid).to.equal('test');
       expect(urn.nss).to.equal('bar');
-      expect(urn.rComponent).to.equal('r');
-      expect(urn.qComponent).to.equal('q');
-      expect(urn.fComponent).to.equal('f');
+      expect(urn.rComponent).to.equal('?+r');
+      expect(urn.qComponent).to.equal('?=q');
+      expect(urn.fComponent).to.equal('#f');
     });
     it('should update all parts when value is changed', () => {
       const urn = new Rfc8141Urn('urn:example:foo');
       urn.value = 'test:bar?+r?=q#f';
       expect(urn.nid).to.equal('test');
       expect(urn.nss).to.equal('bar');
-      expect(urn.rComponent).to.equal('r');
-      expect(urn.qComponent).to.equal('q');
-      expect(urn.fComponent).to.equal('f');
+      expect(urn.rComponent).to.equal('?+r');
+      expect(urn.qComponent).to.equal('?=q');
+      expect(urn.fComponent).to.equal('#f');
       expect(urn.ref).to.equal('urn:test:bar?+r?=q#f');
     });
     it('should maintain component order when formatting', () => {
@@ -117,6 +117,21 @@ describe('Rfc8141Urn', () => {
       urn.qComponent = 'query';
       urn.rComponent = 'res';
       expect(urn.ref).to.equal('urn:example:foo?+res?=query#frag');
+    });
+    it('should automatically fix bad user input that is missing prefix', () => {
+      const urn = new Rfc8141Urn('urn:example:foo');
+      expect(urn.rComponent).to.equal('');
+      expect(urn.qComponent).to.equal('');
+      expect(urn.fComponent).to.equal('');
+      urn.rComponent = 'hello';
+      expect(urn.rComponent).to.equal('?+hello');
+      expect(urn.ref).to.equal('urn:example:foo?+hello');
+      urn.qComponent = 'world';
+      expect(urn.qComponent).to.equal('?=world');
+      expect(urn.ref).to.equal('urn:example:foo?+hello?=world');
+      urn.fComponent = 'foo';
+      expect(urn.fComponent).to.equal('#foo');
+      expect(urn.ref).to.equal('urn:example:foo?+hello?=world#foo');
     });
   });
   describe('validation', () => {
@@ -141,6 +156,13 @@ describe('Rfc8141Urn', () => {
     it('should return ref', () => {
       const urn = new Rfc8141Urn('urn:example:foo?+r?=q#f');
       expect(urn.toString()).to.equal('urn:example:foo?+r?=q#f');
+    });
+    it('should maintain empty RQF values', () => {
+      const urn = new Rfc8141Urn('urn:example:foo?+?=#');
+      expect(urn.rComponent).to.equal('?+');
+      expect(urn.qComponent).to.equal('?=');
+      expect(urn.fComponent).to.equal('#');
+      expect(urn.toString()).to.equal('urn:example:foo?+?=#');
     });
   });
 });

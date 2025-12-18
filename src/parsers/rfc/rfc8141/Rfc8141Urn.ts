@@ -3,6 +3,7 @@ import { parseProtocol, formatProtocol } from '../../../utils/protocol';
 import type { IRfc8141Urn } from './IRfc8141Urn';
 import { parseRfc8141Urn, formatRfc8141Urn } from './utils';
 import { argOk } from '../../../errors/assert';
+import { fComponentPrefix, qComponentPrefix, rComponentPrefix } from './constants';
 
 export class Rfc8141Urn implements IRfc8141Urn {
   public get protocol(): string {
@@ -80,6 +81,9 @@ export class Rfc8141Urn implements IRfc8141Urn {
     return this._rComponent;
   }
   public set rComponent(value: string) {
+    if (value !== '' && !value.startsWith(rComponentPrefix)) {
+      value = rComponentPrefix + value;
+    }
     this._rComponent = value;
     this.updateFromParts();
   }
@@ -89,6 +93,9 @@ export class Rfc8141Urn implements IRfc8141Urn {
     return this._qComponent;
   }
   public set qComponent(value: string) {
+    if (value !== '' && !value.startsWith(qComponentPrefix)) {
+      value = qComponentPrefix + value;
+    }
     this._qComponent = value;
     this.updateFromParts();
   }
@@ -98,6 +105,9 @@ export class Rfc8141Urn implements IRfc8141Urn {
     return this._fComponent;
   }
   public set fComponent(value: string) {
+    if (value !== '' && !value.startsWith(fComponentPrefix)) {
+      value = fComponentPrefix + value;
+    }
     this._fComponent = value;
     this.updateFromParts();
   }
