@@ -164,5 +164,12 @@ describe('Rfc8141Urn', () => {
       expect(urn.fComponent).to.equal('#');
       expect(urn.toString()).to.equal('urn:example:foo?+?=#');
     });
+    it('should exclude RQF values if none existed initially', () => {
+      const urn = new Rfc8141Urn('urn:example:foo');
+      expect(urn.rComponent).to.equal('');
+      expect(urn.qComponent).to.equal('');
+      expect(urn.fComponent).to.equal('');
+      expect(urn.toString()).to.equal('urn:example:foo');
+    });
   });
 });
