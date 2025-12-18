@@ -4,6 +4,10 @@ const RFC2141_NID_VALID = new Set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRS
 
 // generates an array of rules that treats all but the last component
 // as an nid string (with limited valid charset)
+/**
+ * @deprecated
+ * This is v2 legacy code from this lib that will only be available via 'urn-lib/legacy' in v4 of this lib
+ */
 export function generateDefaultValidationRules(components: string[]): ValidationRule[] {
   const lastIndex = components.length - 1;
   const rules: ValidationRule[] = [];
@@ -73,6 +77,10 @@ export function isValid(
   return isString(value) && (allowZeroLength || value.length > 0);
 }
 
+/**
+ * @deprecated
+ * This is v2 legacy code from this lib that will only be available via 'urn-lib/legacy' in v4 of this lib
+ */
 export function urnObject(
   protocol: string,
   customRules: ValidationRule[],

@@ -90,9 +90,7 @@ const configs: Configuration[] = [
     externals: [
       nodeExternals({importType: 'module', allowlist}),
       // required for ESM variant only. see https://github.com/webpack/webpack/issues/15574
-      {
-        // assert: 'assert',
-      },
+      // NOTE: ^=== however, we don't want to include any node built-ins because they're not portable to browser
     ],
     optimization: {
       minimize: false,

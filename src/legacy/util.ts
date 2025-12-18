@@ -11,6 +11,10 @@ export type UrnLibOptions = Partial<{
   validationRules: (ValidationRule | ValidationRuleObject)[];
 }>;
 
+/**
+ * @deprecated
+ * This is v2 legacy code from this lib that will only be available via 'urn-lib/legacy' in v4 of this lib
+ */
 export function createUrnUtil(
   protocol: string,
   options: UrnLibOptions = {}
