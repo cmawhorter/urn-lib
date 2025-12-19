@@ -1,4 +1,4 @@
-import { createUrnUtil } from '../../src/main'; // import ... from 'urn-lib'
+import { createUrnUtil } from '../../src/main'; // import ... from '@cmawhorter/urn-lib'
 const arn = createUrnUtil('arn', {
   components: [
     'partition',
