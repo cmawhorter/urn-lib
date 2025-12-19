@@ -43,8 +43,7 @@
   ],
   "author": {
     "name": "Cory Mawhorter",
-    "email": "cory.mawhorter@gmail.com",
-    "url": "http://www.mawhorter.net/"
+    "email": "cory.mawhorter@gmail.com"
   },
   "scripts": {
     "build": "node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js --config webpack.config.ts",
