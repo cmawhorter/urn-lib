@@ -3,7 +3,7 @@ import { isString } from './validate';
 
 /**
  * @deprecated
- * This is v2 legacy code from this lib that will only be available via 'urn-lib/legacy' in v4 of this lib
+ * This is v2 legacy code from this lib that will only be available via '@cmawhorter/urn/legacy' in v4 of this lib
  */
 export function parseUrn(
   components: string[],

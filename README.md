@@ -11,9 +11,18 @@ Two interfaces are provided by the lib:
 ## Getting started
 Examples are available in "examples/" and should get you started.
 
+This project was previously available on npm as `urn-lib`, but as of v3, has been moved to github. To install, you'll need to do the following:
+
+Create ".npmrc" file in your project and add the line:
+```
+@cmawhorter:registry=https://npm.pkg.github.com
+```
+
+After that, npm should function normally and you can install with `npm i @cmawhorter/urn-lib`.
+
 ## Legacy v2 and earlier
 As of v3, the lib as been completely rewritten, however, legacy code still exists as-is and is available. 
 
-This will be removed in a future v4, but still available via export defined in package.json i.e. `import ... from 'urn-lib/legacy'`.
+This will be removed in a future v4, but still available via export defined in package.json i.e. `import ... from '@cmawhorter/urn-lib/legacy'`.
 
 The [legacy code readme](README_legacy.md) is still available.

@@ -1,5 +1,5 @@
 {
-  "name": "urn-lib",
+  "name": "@cmawhorter/urn-lib",
   "version": "3.0.0",
   "description": "Creating, parsing, and validating",
   "type": "module",
@@ -56,10 +56,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/cmawhorter/urn.git"
+    "url": "git://github.com/cmawhorter/urn-lib.git"
   },
   "bugs": {
-    "url": "https://github.com/cmawhorter/urn/issues"
+    "url": "https://github.com/cmawhorter/urn-lib/issues"
   },
   "license": "MIT",
   "devDependencies": {
