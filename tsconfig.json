@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "outDir": "./dist",
-    "target": "ES6",
-    "lib": [
-      "es6"
-    ],
+    "target": "ES2020",
+    "lib": ["esnext"],
     "strict": true,
     "noImplicitAny": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "esModuleInterop": true,
   },
   "include": [
-    "./src/**/*",
-  ]
+    "src/**/*"
+  ],
 }

@@ -1,0 +1,1 @@
+export const ERR_MISSING_ARGS = 'ERR_MISSING_ARGS';
