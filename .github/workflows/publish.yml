@@ -1,7 +1,9 @@
 name: Publish
 
+# must be node v24 per this comment? https://github.com/npm/cli/issues/8730#issuecomment-3657780285
+# ...i've tried everything else
 env:
-  NODE_VERSION: 20
+  NODE_VERSION: 24
 
 on:
   release:
