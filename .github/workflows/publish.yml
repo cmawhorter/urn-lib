@@ -1,4 +1,4 @@
-name: publish
+name: Publish
 
 env:
   NODE_VERSION: 20
@@ -10,11 +10,15 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for OIDC authentication
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          registry-url: https://registry.npmjs.org/
       # Log versions
       - run: npm --version; node --version
       - run: echo "PKG_VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
@@ -22,13 +26,26 @@ jobs:
       # NOTE: release tags **must** start with a lowercase "v" and then version
       - run: |
           if [ "v${{env.PKG_VERSION}}" != "${{ github.event.release.tag_name }}" ]; then
-            echo 'Error! Package version "v${{env.PKG_VERSION}}" does not match tag version "${{ github.event.release.tag_name }}"'
+            echo '::error::Error! Package version "v${{env.PKG_VERSION}}" does not match tag version "${{ github.event.release.tag_name }}"'
             exit 1
           fi
-      - run: echo 'Publishing version - ${{env.PKG_VERSION}}'
-      - run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ./.npmrc
-      - run: echo "@cmawhorter:registry=https://npm.pkg.github.com" >> ./.npmrc
+      - run: echo '::notice::Publishing version - ${{env.PKG_VERSION}}'
       - run: npm ci
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      - run: npm publish --provenance --access public
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-files
+          path: dist/
+          retention-days: 90
+      - name: Verify publication
+        run: |
+          PACKAGE_VERSION=$(jq -r .version package.json)
+          sleep 10  # Wait for npm to update
+          PUBLISHED_VERSION=$(npm view urn-lib version)
+
+          if [ "$PACKAGE_VERSION" = "$PUBLISHED_VERSION" ]; then
+            echo "::notice::Successfully published version $PUBLISHED_VERSION"
+          else
+            echo "::warning::Published version check inconclusive"
+          fi
