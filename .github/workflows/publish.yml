@@ -31,7 +31,7 @@ jobs:
           fi
       - run: echo '::notice::Publishing version - ${{env.PKG_VERSION}}'
       - run: npm ci
-      - run: npm publish --provenance --access public
+      - run: npm publish
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
