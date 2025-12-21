@@ -1,4 +1,4 @@
-import { Rfc2141Urn } from '../../src/main'; // import ... from '@cmawhorter/urn-lib'
+import { Rfc2141Urn } from '../../src/main'; // import ... from 'urn-lib'
 
 const urn = new Rfc2141Urn('urn:ietf:rfc:7230');
 
