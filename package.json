@@ -1,15 +1,15 @@
 {
   "name": "@cmawhorter/urn-lib",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Creating, parsing, and validating",
   "type": "module",
   "main": "dist/main.mjs",
   "browser": "dist/web.cjs",
-  "types": "dist/src/main.d.ts",
+  "types": "dist/main.d.ts",
   "source": "src/main.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/main.d.ts",
+      "types": "./dist/main.d.ts",
       "node": {
         "require": "./dist/main.cjs",
         "default": "./dist/main.mjs"
@@ -21,7 +21,7 @@
       }
     },
     "./legacy": {
-      "types": "./dist/src/legacy/index.d.ts",
+      "types": "./dist/legacy/index.d.ts",
       "node": {
         "require": "./dist/legacy.cjs",
         "default": "./dist/legacy.mjs"
