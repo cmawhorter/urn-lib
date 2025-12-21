@@ -1,4 +1,4 @@
-import { parseRfc2141Urn, formatRfc2141Urn, parseProtocol, formatProtocol } from '../../src/main'; // import ... from '@cmawhorter/urn-lib'
+import { parseRfc2141Urn, formatRfc2141Urn, parseProtocol, formatProtocol } from '../../src/main'; // import ... from 'urn-lib'
 
 const urn = 'urn:ietf:rfc:7230';
 

@@ -6,15 +6,12 @@ Yes, it's true that RFC2141 is deprecated (replaced by URI), but urn is still a 
 
 No dependencies.  Has tests.  PRs welcome.
 
-## Getting started
-Note that as part of v3 rewrite, this package was moved to GH (instead of npm), and the install instructions have changed. Refer to main readme for details.
-
 ## Usage
 
 Using the default RFC2141 parser.
 
 ```ts
-import { RFC2141 } from '@cmawhorter/urn-lib';
+import { RFC2141 } from 'urn-lib';
 const str = 'urn:ietf:rfc:2648';
 const parsed = RFC2141.parse(str); 
 const validationErrors = RFC2141.validate(parsed);
@@ -45,7 +42,7 @@ Output:
 ## Example for AWS arn's
 
 ```ts
-import { createUrnUtil } from '@cmawhorter/urn-lib';
+import { createUrnUtil } from 'urn-lib';
 const arn = createUrnUtil('arn', {
   components: [ // protocol is automatically added (protocol = urn or arn or whatever)
     'partition',
@@ -91,7 +88,7 @@ Creates an array of validation rules that target each named component in the arr
 
 Example: 
 ```ts
-import { generateDefaultValidationRules } from '@cmawhorter/urn-lib';
+import { generateDefaultValidationRules } from 'urn-lib';
 // If creating an AWS arn parser:
 generateDefaultValidationRules([ 
     // no need to add "arn". that is considered the "protocol" and added/handled for you outside of default rules
@@ -141,7 +138,7 @@ Note: There is currently a bug/feature #7 that will cause validation to fail if 
 
 Example:
 ```ts
-import { createUrnUtil } from '@cmawhorter/urn-lib';
+import { createUrnUtil } from 'urn-lib';
 const myUrn = createUrnUtil(...);
 const parsedUrn: ParsedUrn = { ... };
 const valid = myUrn.validate(parsedUrn);
@@ -158,7 +155,7 @@ Note: If parsed.protocol exists it is **ignored** and the protocol supplied with
 
 Example:
 ```ts
-import { createUrnUtil } from '@cmawhorter/urn-lib';
+import { createUrnUtil } from 'urn-lib';
 const componentNames = [ 'something', 'else', 'not_included' ];
 const myUrn = createUrnUtil(...);
 const parsedUrn: ParsedUrn = {
@@ -183,7 +180,7 @@ Note: Build returns null values and there is currently a bug/feature #7 with val
 
 Example:
 ```ts
-import { createUrnUtil } from '@cmawhorter/urn-lib';
+import { createUrnUtil } from 'urn-lib';
 // componentNames = [ 'something', 'else', 'not_included' ];
 const myUrn = createUrnUtil(...);
 // parsed will contain full object with all component names set to null, unless provided
@@ -221,7 +218,7 @@ Using an AWS arn as an example, you would probably want to add some custom valid
 You could do that like so:
 
 ```ts
-import { createUrnUtil, generateDefaultValidationRules } from '@cmawhorter/urn-lib';
+import { createUrnUtil, generateDefaultValidationRules } from 'urn-lib';
 const components = [
   'partition',
   'service',

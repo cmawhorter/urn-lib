@@ -1,4 +1,4 @@
-import { Rfc2141Urn } from '../../src/main'; // import ... from '@cmawhorter/urn-lib'
+import { Rfc2141Urn } from '../../src/main'; // import ... from 'urn-lib'
 import type { IRfcUrn } from '../../src/parsers/rfc/IRfcUrn';
 
 // There are a few different ways to achieve something like this

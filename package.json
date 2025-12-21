@@ -1,6 +1,6 @@
 {
-  "name": "@cmawhorter/urn-lib",
-  "version": "3.0.1",
+  "name": "urn-lib",
+  "version": "3.0.0",
   "description": "Creating, parsing, and validating",
   "type": "module",
   "main": "dist/main.mjs",

@@ -9,20 +9,48 @@ Two interfaces are provided by the lib:
 - Functional utils for parsing and formatting e.g. `parseRfc8141Urn('ietf:rfc:7230')` and `formatRfc8141Urn(parsedObj)`. Note that these expect protocol to be stripped, which can be done using `parseProtocol` and `formatProtocol`, if needed
 
 ## Getting started
-Examples are available in "examples/" and should get you started.
+Run `npm i urn-lib`. More complete examples are available in "examples/" and should get you started:
+```ts
+import { Rfc8141Urn } from 'urn-lib';
+// Functions parseRfc8141Urn and formatRfc8141Urn are available 
+// as well, but note that they expect input without a protocol
+// i.e. "example:value" instead of "urn:example:value". 
+// See examples/rfc/rfc8141_utils.ts for example
 
-This project was previously available on npm as `urn-lib`, but as of v3, has been moved to github. To install, you'll need to do the following:
+const urn = new Rfc8141Urn('urn:example:value');
+console.log('Parsed', { // Alternatively, you could to `urn.toJSON()`
+  ref: urn.ref,
+  protocol: urn.protocol,
+  value: urn.value,
+  nid: urn.nid,
+  nss: urn.nss,
+  // Like with `URL`, these values include the prefix
+  // e.g. rComponent would start with "?+" if it was 
+  // included in the input, or an empty string if not
+  rComponent: urn.rComponent,
+  qComponent: urn.qComponent,
+  fComponent: urn.fComponent,
+});
+// Parsed {
+//   ref: 'urn:example:value',
+//   protocol: 'urn:',
+//   value: 'example:value',
+//   nid: 'example',
+//   nss: 'value',
+//   rComponent: '',
+//   qComponent: '',
+//   fComponent: ''
+// }
 
-Create ".npmrc" file in your project and add the line:
+console.log('Formatted', urn.toString()); // Formatted urn:example:value
+
+urn.nss = 'world';
+console.log('Hello', urn.toString()); // Formatted urn:example:world
 ```
-@cmawhorter:registry=https://npm.pkg.github.com
-```
-
-After that, npm should function normally and you can install with `npm i @cmawhorter/urn-lib`.
 
 ## Legacy v2 and earlier
 As of v3, the lib as been completely rewritten, however, legacy code still exists as-is and is available. 
 
-This will be removed in a future v4, but still available via export defined in package.json i.e. `import ... from '@cmawhorter/urn-lib/legacy'`.
+This will be removed in a future v4, but still available via export defined in package.json i.e. `import ... from 'urn-lib/legacy'`.
 
 The [legacy code readme](README_legacy.md) is still available.

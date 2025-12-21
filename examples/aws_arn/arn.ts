@@ -1,4 +1,4 @@
-import { AwsArn } from '../../src/main'; // import ... from '@cmawhorter/urn-lib'
+import { AwsArn } from '../../src/main'; // import ... from 'urn-lib'
 
 const arn = new AwsArn('arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:c7a27f55-d35e-4153-b044-8ca9155fc467:autoScalingGroupName/my-test-asg1:policyName/my-scaleout-policy');
 
